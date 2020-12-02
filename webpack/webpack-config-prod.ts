@@ -5,7 +5,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 
 import packageInfo from '../package.json';
-import { ViaProfitKnexWebpackPlugin } from '../src/webpack-utils';
+import { knexExternals } from '../src/webpack-utils';
 import webpackBaseConfig from './webpack-config-base';
 
 const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
@@ -23,7 +23,7 @@ const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
   },
   mode: 'production',
   plugins: [
-    new ViaProfitKnexWebpackPlugin(),
+    // new ViaProfitKnexWebpackPlugin(),
     new BannerPlugin({
       banner: `
 Via Profit Services / Knex
@@ -63,12 +63,14 @@ Contact    ${packageInfo.support}
       },
     },
   ],
-  externals: {
-    '@via-profit-services/core': '@via-profit-services/core',
-    'supports-color': 'supports-color',
-    'moment-timezone': 'moment-timezone',
-    moment: 'moment',
-  },
+  externals: [
+    /@via-profit-services\/core/,
+    /supports-color/,
+    /moment-timezone/,
+    /moment/,
+
+    ...knexExternals,
+  ],
 });
 
 export default webpackProdConfig;

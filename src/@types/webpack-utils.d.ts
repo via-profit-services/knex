@@ -14,3 +14,5 @@
   }
 
   export const webpackMigrationsConfig: MigrationConfigFactory;
+
+  export const knexExternals: RegExp[];
