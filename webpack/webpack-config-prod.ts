@@ -9,7 +9,10 @@ import { ViaProfitKnexWebpackPlugin } from '../src/webpack-utils';
 import webpackBaseConfig from './webpack-config-base';
 
 const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
-entry: {
+  optimization: {
+    minimize: false,
+  },
+  entry: {
     index: path.resolve(__dirname, '../src/index.ts'),
     'webpack-utils': path.resolve(__dirname, '../src/webpack-utils/index.ts'),
   },
