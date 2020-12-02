@@ -1,42 +1,32 @@
-import {
-  IDirectionRange, TOrderBy, TWhereAction, TTableAliases, TWhere, applyAliases, TBetween,
-} from '@via-profit-services/core';
-import Knex from 'knex';
+import { WhereAction, Where, applyAliases } from '@via-profit-services/core';
+import { ConvertOrderByToKnex, ConvertJsonToKnex, ConvertBetweenToKnex, ConvertWhereToKnex } from '@via-profit-services/knex';
 import moment from 'moment-timezone';
 
+import { DEFAULT_TIMEZONE } from '../constants';
 /**
  * Convert GraphQL OrderBy array to Knex OrderBy array format
- * @param { TOrderBy } orderBy Array of objects econtains { field: "", direction: "" }
  */
-export const convertOrderByToKnex = (orderBy: TOrderBy | undefined):
-  TOrderByKnex => [...(orderBy || [])].map(({ field, direction }) => ({
-  column: field,
-  order: direction,
-}));
+export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy) => {
+  const orderByArray = [...(orderBy || [])];
 
-
-// eslint-disable-next-line arrow-body-style
-export const convertJsonToKnex = <TRecord = any>(knex: Knex, json: any | Array<any>) => {
-  return knex.raw<TRecord>(`'${JSON.stringify(json)}'::jsonb`);
+  return orderByArray.map(({ field, direction }) => ({
+    column: field,
+    order: direction,
+  }))
 };
 
 
-export const convertBetweenToKnex = (
-  /**
-   * Put your Knex builder \
-   * For example: `knex('table').where((builder) => convertBetweenToKnex(builder, between))`
-   */
-  builder: Knex.QueryBuilder,
-  between: TBetween | undefined,
-  options?: {
-    aliases?: TTableAliases;
-    timezone: string;
-  }
-  ,
-) => {
+export const convertJsonToKnex: ConvertJsonToKnex = (knex, json) => {
+  const jsonString = `'${JSON.stringify(json)}'::jsonb`;
+
+  return knex.raw(jsonString);
+};
+
+
+export const convertBetweenToKnex: ConvertBetweenToKnex = ( builder, between, options) => {
   const { aliases, timezone } = options || {
     aliases: {},
-    timezone: 'UTC',
+    timezone: DEFAULT_TIMEZONE,
   };
 
   if (typeof between === 'undefined') {
@@ -70,26 +60,12 @@ export const convertBetweenToKnex = (
 };
 
 
-export const convertWhereToKnex = (
-  /**
-   * Put your Knex builder \
-   * For example: `knex('table').where((builder) => convertWhereToKnex(builder, where))`
-   */
-  builder: Knex.QueryBuilder,
-
-  /**
-   * Just `TWhere` array
-   */
-  whereClause: {
-      [key: string]: string | number | boolean | null;
-    } | TWhere,
-  aliases?: TTableAliases,
-) => {
+export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, aliases ) => {
   if (typeof whereClause === 'undefined') {
     return builder;
   }
 
-  const whereArray: TWhere = [];
+  const whereArray: Where = [];
   // if is an array
   if (Array.isArray(whereClause)) {
     whereClause.forEach(([field, action, value]) => {
@@ -99,7 +75,7 @@ export const convertWhereToKnex = (
 
   if (!Array.isArray(whereClause)) {
     Object.entries(whereClause).forEach(([field, value]) => {
-      whereArray.push([field, TWhereAction.EQ, value]);
+      whereArray.push([field, WhereAction.EQ, value]);
     });
   }
 
@@ -108,20 +84,20 @@ export const convertWhereToKnex = (
     : whereArray),
   ].forEach(([field, action, value]) => {
     switch (true) {
-      case action === TWhereAction.IN:
+      case action === WhereAction.IN:
 
         builder.whereIn(field, Array.isArray(value) ? value : [value] as Array<string | number>);
         break;
 
-      case action === TWhereAction.NOTIN:
+      case action === WhereAction.NOTIN:
         builder.whereNotIn(field, Array.isArray(value) ? value : [value] as Array<string | number>);
         break;
 
-      case action === TWhereAction.NULL:
+      case action === WhereAction.NULL:
         builder.whereNull(field);
         break;
 
-      case action === TWhereAction.NOTNULL:
+      case action === WhereAction.NOTNULL:
         builder.whereNotNull(field);
         break;
 
@@ -134,9 +110,4 @@ export const convertWhereToKnex = (
 
   return builder;
 };
-
-export type TOrderByKnex = Array<{
-  column: string;
-  order: IDirectionRange;
-}>;
 

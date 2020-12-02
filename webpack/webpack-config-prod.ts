@@ -1,5 +1,6 @@
+import fs from 'fs';
 import path from 'path';
-import { BannerPlugin, Configuration } from 'webpack';
+import { BannerPlugin, Configuration, Compiler } from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 
@@ -33,6 +34,27 @@ Contact    ${packageInfo.support}
       analyzerMode: process.env.ANALYZE ? 'server' : 'disabled',
       openAnalyzer: true,
     }),
+    {
+      apply: (compiler: Compiler) => {
+        compiler.hooks.beforeRun.tapAsync('WebpackBeforeBuild', (_, callback) => {
+
+          if (fs.existsSync(path.join(__dirname, '../dist/'))) {
+            fs.rmdirSync(path.join(__dirname, '../dist/'), { recursive: true })
+          }
+
+          callback();
+        });
+
+        compiler.hooks.afterEmit.tapAsync('WebpackAfterBuild', (_, callback) => {
+          fs.copyFileSync(
+            path.resolve(__dirname, '../src/@types/index.d.ts'),
+            path.resolve(__dirname, '../dist/index.d.ts'),
+          );
+          callback();
+        });
+
+      },
+    },
   ],
   externals: {
     '@via-profit-services/core': '@via-profit-services/core',

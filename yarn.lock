@@ -924,7 +924,7 @@ __metadata:
 
 "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core::locator=%40via-profit-services%2Fknex%40workspace%3A.":
   version: 0.31.6
-  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=b3da23&locator=%40via-profit-services%2Fknex%40workspace%3A."
+  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=78902d&locator=%40via-profit-services%2Fknex%40workspace%3A."
   dependencies:
     cookie-parser: ^1.4.5
     cors: ^2.8.5
@@ -949,9 +949,7 @@ __metadata:
     moment: "*"
     moment-timezone: "*"
     uuid: "*"
-  bin:
-    via-profit-core: ./dist/bin/cli.js
-  checksum: 5c4a9d07162ae92b08e0b9fccc92d36de2bf3df3654202a27db68f9fe967ac76115abcebf21b57a5159c3e8eac070bc68c57290ad3bbb7382805a37f45af5863
+  checksum: 5874d4887ef2f816820b47af39d60f3a0f9ecddb49302865d9f38c740603857af40c0194d825cc7fff76757ba27a1c55f84e5646dc1285f7c99b2d9628927f3c
   languageName: node
   linkType: hard
 
@@ -1028,8 +1026,6 @@ __metadata:
     "@via-profit-services/core": "*"
     moment: "*"
     moment-timezone: "*"
-  bin:
-    via-profit-knex: ./dist/bin/cli.js
   languageName: unknown
   linkType: soft
 

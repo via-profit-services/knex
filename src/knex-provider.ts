@@ -1,53 +1,14 @@
-import { Winston, ServerError } from '@via-profit-services/core';
-import { Knex } from 'index';
-import knex, { PgConnectionConfig, MigratorConfig, SeederConfig, PoolConfig } from 'knex';
+import { ServerError } from '@via-profit-services/core';
+import type { KnexProvider, Knex } from '@via-profit-services/knex';
+
+import knex from 'knex';
 import moment from 'moment-timezone';
 import { performance } from 'perf_hooks';
 import { types } from 'pg';
 
 import { DATABASE_CHARSET, DATABASE_CLIENT, DEFAULT_TIMEZONE, ENABLE_PG_TYPES } from './constants';
 
-export interface Configuration {
-
-  /**
-   * PostgreSQL connection config
-   */
-  connection: PgConnectionConfig;
-
-  /**
-   * Database server timezone\
-   * \
-   * Default: `UTC`
-   */
-  timezone?: string;
-
-  /**
-   * **Local** server timezone\
-   * Used for convert `timestamp` and `timestamptz` entities to local `Date`\
-   * If `enablePgTypes` is false then this property not used\
-   * \
-   * Default: `UTC`
-   */
-  localTimezone?: string;
-
-  /**
-   * Used for convert `timestamp` and `timestamptz` entities to local `Date`\
-   * This option use `localTimezone` property\
-   * \
-   * Default: `true`
-   */
-  enablePgTypes?: boolean;
-  migrations?: MigratorConfig;
-  seeds?: SeederConfig;
-  pool?: PoolConfig;
-}
-
-export interface KnexProviderProps {
-  config: Configuration;
-  logger: Winston.Logger;
-}
-
-const knexProvider = (props: KnexProviderProps) => {
+const knexProvider: KnexProvider = (props) => {
   const { config, logger } = props;
   const { connection, timezone, localTimezone, pool, enablePgTypes } = config;
   const times: { [key: string]: any } = {};
