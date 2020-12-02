@@ -2,20 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { Configuration, Entry } from 'webpack';
 
+import { MigrationConfigFactory, MigrationsConfigProps } from '../@types/webpack-utils';
 import ViaProfitKnexWebpackPligin from './plugin';
 
-interface MigrationsConfigProps {
-  knexfile?: string;
-  prefix?: string;
-  migrationsSourceDir?: string;
-  seedsSourceDir?: string;
-}
 
-type DefaultMigrationsConfigProps = Required<MigrationsConfigProps>;
+const migrationsConfig: MigrationConfigFactory = (props) => {
 
-const migrationsConfig = (props?: MigrationsConfigProps) => {
-
-  const defaultProps: DefaultMigrationsConfigProps = {
+  const defaultProps: Required<MigrationsConfigProps> = {
     prefix: '.knex',
     knexfile: path.resolve(process.cwd(), './utils/knexfile.ts'),
     migrationsSourceDir: path.resolve(process.cwd(), './database/migrations'),

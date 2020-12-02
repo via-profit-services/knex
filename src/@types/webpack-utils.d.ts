@@ -1,7 +1,16 @@
+  import { WebpackPluginInstance, Configuration, Compiler } from 'webpack';
 
-declare module '@via-profit-services/knex/webpack-utils' {
-  import { WebpackPluginInstance, Configuration } from 'webpack';
+  export interface MigrationsConfigProps {
+    knexfile?: string;
+    prefix?: string;
+    migrationsSourceDir?: string;
+    seedsSourceDir?: string;
+  }
 
-  export const ViaProfitKnexWebpackPlugin: WebpackPluginInstance;
-  export const webpackMigrationsConfig: Configuration;
-}
+  export type MigrationConfigFactory = (props?: MigrationsConfigProps) => Configuration;
+
+  export class ViaProfitKnexWebpackPlugin implements WebpackPluginInstance {
+    apply(compiler: Compiler): void;
+  }
+
+  export const webpackMigrationsConfig: MigrationConfigFactory;
