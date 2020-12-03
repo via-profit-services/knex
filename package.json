@@ -103,6 +103,7 @@
     },
     "peerDependencies": {
         "@via-profit-services/core": "*",
+        "knex": "*",
         "moment": "*",
         "moment-timezone": "*",
         "winston": "*",

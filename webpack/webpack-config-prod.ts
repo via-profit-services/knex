@@ -64,9 +64,12 @@ Contact    ${packageInfo.support}
     },
   ],
   externals: [
-    /@via-profit-services\/core/,
-    /moment-timezone/,
-    /moment/,
+    /^@via-profit-services\/core$/,
+    /^moment-timezone$/,
+    /^moment$/,
+    /^knex$/,
+    /^winston$/,
+    /^winston-daily-rotate-file$/,
 
     ...knexExternals,
   ],

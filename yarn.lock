@@ -890,7 +890,7 @@ __metadata:
 
 "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core::locator=%40via-profit-services%2Fknex%40workspace%3A.":
   version: 0.31.6
-  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=337909&locator=%40via-profit-services%2Fknex%40workspace%3A."
+  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=1ea824&locator=%40via-profit-services%2Fknex%40workspace%3A."
   dependencies:
     bufferutil: ^4.0.2
     content-type: ^1.0.4
@@ -921,7 +921,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 269e718d3a69c32e05c63091dfb5670a4f75a3bc31124c5ec38d921b8a49f2dd483ac1b164a967ed414d5eda7b2570221a452bf18ef84367c0ca29f431c42968
+  checksum: cf96ca2551adf51ac824e6f8147d99e0fc243b1a9bdfd7ff270b705242f1bbf4758ca0f376d2ca297367fbb0b759da9262ffd5916e8f3cffe06e9782a5354a9e
   languageName: node
   linkType: hard
 
@@ -990,6 +990,7 @@ __metadata:
     winston-daily-rotate-file: ^4.5.0
   peerDependencies:
     "@via-profit-services/core": "*"
+    knex: "*"
     moment: "*"
     moment-timezone: "*"
     winston: "*"
