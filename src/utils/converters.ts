@@ -1,5 +1,8 @@
-import { Where, applyAliases } from '@via-profit-services/core';
-import { ConvertOrderByToKnex, ConvertJsonToKnex, ConvertBetweenToKnex, ConvertWhereToKnex } from '@via-profit-services/knex';
+import { Where, applyAliases, ServerError } from '@via-profit-services/core';
+import {
+  ConvertOrderByToKnex, ConvertJsonToKnex, ConvertBetweenToKnex,
+  ConvertWhereToKnex, ConvertSearchToKnex,
+} from '@via-profit-services/knex';
 import moment from 'moment-timezone';
 
 import { DEFAULT_TIMEZONE } from '../constants';
@@ -17,9 +20,16 @@ export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy) => {
 
 
 export const convertJsonToKnex: ConvertJsonToKnex = (knex, json) => {
-  const jsonString = `'${JSON.stringify(json)}'::jsonb`;
+  try {
+    const jsonString = `'${JSON.stringify(json)}'::jsonb`;
 
-  return knex.raw(jsonString);
+    return knex.raw(jsonString);
+  } catch (err) {
+    throw new ServerError(
+      'Json field convertation failure. Check the «convertJsonToKnex» passed params',
+      { err },
+    )
+  }
 };
 
 
@@ -111,3 +121,20 @@ export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, al
   return builder;
 };
 
+export const convertSearchToKnex: ConvertSearchToKnex = (builder, search) => {
+  if (search) {
+    try {
+      search.forEach(({ field, query }) => {
+        query.split(' ').map((subquery) =>
+          builder.orWhereRaw(`"${field}"::text ilike '%${subquery}%'`),
+        );
+      });
+    } catch (err) {
+      throw new ServerError(
+        'Search field convertation failure. Check the «convertSearchToKnex» passed params',
+        { err });
+    }
+  }
+
+  return builder;
+}

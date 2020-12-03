@@ -31,7 +31,11 @@ declare module '@via-profit-services/core' {
 
 declare module '@via-profit-services/knex' {
   import type Knex from 'knex';
-  import { OrderBy, DirectionRange, Between, TableAliases, Where, WhereValue, Logger, Middleware } from '@via-profit-services/core';
+  import {
+    OrderBy, DirectionRange, Between, Node,
+    TableAliases, Where, WhereValue,
+    Logger, Middleware, OutputSearch,
+  } from '@via-profit-services/core';
 
 
   export interface Configuration {
@@ -98,11 +102,25 @@ declare module '@via-profit-services/knex' {
     aliases?: TableAliases,
   ) => Knex.QueryBuilder<any, any>;
 
+  export type ConvertSearchToKnex = (
+    builder: Knex.QueryBuilder,
+    search: OutputSearch | false | undefined | null,
+  ) => Knex.QueryBuilder<any, any>;
+
+
+  export type ExtractTotalCountPropOfNode = <T extends {totalCount: number }>(
+    nodes: T[],
+  ) => {
+    nodes: Array<Omit<T, 'totalCount'>>;
+    totalCount: number;
+  }
 
   export const convertOrderByToKnex: ConvertOrderByToKnex;
   export const convertJsonToKnex: ConvertJsonToKnex;
   export const convertBetweenToKnex: ConvertBetweenToKnex;
   export const convertWhereToKnex: ConvertWhereToKnex;
+  export const convertSearchToKnex: ConvertSearchToKnex;
+  export const extractTotalCountPropOfNode: ExtractTotalCountPropOfNode;
   export const DATABASE_CHARSET: string;
   export const DATABASE_CLIENT: string;
   export const DEFAULT_TIMEZONE: string;
