@@ -1,4 +1,4 @@
-import { WhereAction, Where, applyAliases } from '@via-profit-services/core';
+import { Where, applyAliases } from '@via-profit-services/core';
 import { ConvertOrderByToKnex, ConvertJsonToKnex, ConvertBetweenToKnex, ConvertWhereToKnex } from '@via-profit-services/knex';
 import moment from 'moment-timezone';
 
@@ -75,7 +75,7 @@ export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, al
 
   if (!Array.isArray(whereClause)) {
     Object.entries(whereClause).forEach(([field, value]) => {
-      whereArray.push([field, WhereAction.EQ, value]);
+      whereArray.push([field, '=', value]);
     });
   }
 
@@ -84,20 +84,20 @@ export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, al
     : whereArray),
   ].forEach(([field, action, value]) => {
     switch (true) {
-      case action === WhereAction.IN:
+      case action === 'in':
 
         builder.whereIn(field, Array.isArray(value) ? value : [value] as Array<string | number>);
         break;
 
-      case action === WhereAction.NOTIN:
+      case action === 'notIn':
         builder.whereNotIn(field, Array.isArray(value) ? value : [value] as Array<string | number>);
         break;
 
-      case action === WhereAction.NULL:
+      case action === 'is null':
         builder.whereNull(field);
         break;
 
-      case action === WhereAction.NOTNULL:
+      case action === 'is not null':
         builder.whereNotNull(field);
         break;
 

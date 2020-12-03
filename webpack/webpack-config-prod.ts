@@ -65,7 +65,6 @@ Contact    ${packageInfo.support}
   ],
   externals: [
     /@via-profit-services\/core/,
-    /supports-color/,
     /moment-timezone/,
     /moment/,
 

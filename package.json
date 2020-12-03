@@ -48,7 +48,8 @@
     "dependencies": {
         "pg": "^8.5.1",
         "pg-hstore": "^2.3.3",
-        "pg-listen": "^1.6.0"
+        "pg-listen": "^1.6.0",
+        "supports-color": "^8.0.0"
     },
     "devDependencies": {
         "@types/jest": "^24.0.23",

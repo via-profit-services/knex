@@ -890,7 +890,7 @@ __metadata:
 
 "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core::locator=%40via-profit-services%2Fknex%40workspace%3A.":
   version: 0.31.6
-  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=12d02a&locator=%40via-profit-services%2Fknex%40workspace%3A."
+  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=337909&locator=%40via-profit-services%2Fknex%40workspace%3A."
   dependencies:
     bufferutil: ^4.0.2
     content-type: ^1.0.4
@@ -921,7 +921,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 04bc7448a18966e327cd99b27a4315bfc9c245117bfd948af4310af6c60bebbfa3a3e431e827b604ea2f92eadff85b2c64e7a44fb0f76d1d4f400255ecc35cd1
+  checksum: 269e718d3a69c32e05c63091dfb5670a4f75a3bc31124c5ec38d921b8a49f2dd483ac1b164a967ed414d5eda7b2570221a452bf18ef84367c0ca29f431c42968
   languageName: node
   linkType: hard
 
@@ -975,6 +975,7 @@ __metadata:
     pg-types: ^3.0.1
     prettier: ^2.1.2
     supertest: ^4.0.2
+    supports-color: ^8.0.0
     terser-webpack-plugin: ^5.0.3
     ts-jest: ^24.2.0
     ts-loader: ^6.2.1
@@ -9403,6 +9404,15 @@ resolve@1.1.7:
   dependencies:
     has-flag: ^4.0.0
   checksum: 8e57067c39216f3c2ffce7cc14ca934d54746192571203aa9c9922d97d2d55cc1bdaa9e41a11f91e620670b5a74ebdec6b548a885d8cc2dea7cab59e21416029
+  languageName: node
+  linkType: hard
+
+"supports-color@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "supports-color@npm:8.0.0"
+  dependencies:
+    has-flag: ^4.0.0
+  checksum: 9f60da6f115c2952712fe130060d94c1ab160d914fde264afbdcc6bd1cea9f47aebc02ffed206aa3e922427aa919c91212a7e03d0b4d570e76791918d541abcb
   languageName: node
   linkType: hard
 
