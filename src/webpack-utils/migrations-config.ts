@@ -10,9 +10,9 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
 
   const defaultProps: Required<MigrationsConfigProps> = {
     prefix: '.knex',
-    knexfile: path.resolve(process.cwd(), './utils/knexfile.ts'),
-    migrationsSourceDir: path.resolve(process.cwd(), './database/migrations'),
-    seedsSourceDir: path.resolve(process.cwd(), './database/seeds'),
+    knexfile: path.resolve(process.cwd(), './src/utils/knexfile.ts'),
+    migrationsSourceDir: path.resolve(process.cwd(), './src/database/migrations'),
+    seedsSourceDir: path.resolve(process.cwd(), './src/database/seeds'),
   };
 
   const config = {
@@ -44,6 +44,9 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
   if (fs.existsSync(knexfile)) {
     entry.knexfile = knexfile;
   }
+
+  // eslint-disable-next-line no-console
+  console.log('entry', Object.keys(entry));
 
   const webpackConfig: Configuration = {
     mode: 'development',
