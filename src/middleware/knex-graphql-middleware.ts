@@ -33,7 +33,7 @@ const knexGraphqlMiddleware: KnexGraphqlMiddleware = (props) => {
       },
     };
 
-    return resolve(parent, args, composedContext, info);
+    return await resolve(parent, args, composedContext, info);
   }
 
   return middleware;
