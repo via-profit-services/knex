@@ -890,7 +890,7 @@ __metadata:
 
 "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core::locator=%40via-profit-services%2Fknex%40workspace%3A.":
   version: 0.31.6
-  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=1ea824&locator=%40via-profit-services%2Fknex%40workspace%3A."
+  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=69263d&locator=%40via-profit-services%2Fknex%40workspace%3A."
   dependencies:
     bufferutil: ^4.0.2
     content-type: ^1.0.4
@@ -921,7 +921,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: cf96ca2551adf51ac824e6f8147d99e0fc243b1a9bdfd7ff270b705242f1bbf4758ca0f376d2ca297367fbb0b759da9262ffd5916e8f3cffe06e9782a5354a9e
+  checksum: 0074584db8ae8e9a4d884ee59a0cd480f76b3abc2c25d955c9b8dcf3b3d15a562128ef826797595548dd472c07bffecbc8f68a9d8e77b516372c17702b996641
   languageName: node
   linkType: hard
 
