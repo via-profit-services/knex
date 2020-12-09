@@ -49,7 +49,7 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
   console.log('entry', Object.keys(entry));
 
   const webpackConfig: Configuration = {
-    mode: 'development',
+    mode: 'production',
     optimization: {
       minimize: false,
     },
@@ -61,9 +61,6 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
     },
     plugins: [
       new ViaProfitKnexWebpackPligin(),
-    ],
-    externals: [
-      /^@via-profit-services\//,
     ],
   };
 
