@@ -4,7 +4,6 @@ import { Configuration, Entry } from 'webpack';
 
 import { MigrationConfigFactory, MigrationsConfigProps } from '../@types/webpack-utils';
 import knexExternals from './knex-externals';
-import ViaProfitKnexWebpackPligin from './plugin';
 
 
 const migrationsConfig: MigrationConfigFactory = (props) => {
@@ -60,9 +59,6 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
       filename: '[name].js',
       libraryTarget: 'commonjs2',
     },
-    plugins: [
-      new ViaProfitKnexWebpackPligin(),
-    ],
     externals: [
       ...knexExternals,
       /@via-profit-services\/knex/,
