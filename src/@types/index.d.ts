@@ -32,16 +32,13 @@ declare module '@via-profit-services/core' {
 declare module '@via-profit-services/knex' {
   import type Knex from 'knex';
   import {
-    OrderBy, DirectionRange, Between, Node,
-    TableAliases, Where, WhereValue, MiddlewareProps,
+    OrderBy, DirectionRange, Between,
+    TableAliases, Where, WhereValue,
     Logger, Middleware, OutputSearch, GraphqlMiddleware,
   } from '@via-profit-services/core';
 
-  export type KnexGraphqlMiddleware = (
-    props: MiddlewareProps & Configuration
-  ) => {
-    knexMiddleware: GraphqlMiddleware;
-  };
+  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => {knexMiddleware: Middleware};
+
 
   export interface Configuration {
 
@@ -133,7 +130,7 @@ declare module '@via-profit-services/knex' {
   export { Knex };
   export const knexProvider: KnexProvider;
 
-  const knexGraphqlMiddleware: KnexGraphqlMiddleware;
+  const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory;
 
-  export default knexGraphqlMiddleware;
+  export default knexMiddlewareFactory;
 }
