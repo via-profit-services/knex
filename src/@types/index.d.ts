@@ -37,7 +37,9 @@ declare module '@via-profit-services/knex' {
     Logger, Middleware, OutputSearch, GraphqlMiddleware,
   } from '@via-profit-services/core';
 
-  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => {knexMiddleware: Middleware};
+  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => {
+    middleware: Middleware
+  };
 
 
   export interface Configuration {

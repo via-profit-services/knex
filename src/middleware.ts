@@ -5,7 +5,7 @@ import sqlLogger from './knex-logger';
 import knexProvider from './knex-provider';
 
 const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = (config) => {
-  const knexMiddleware: Middleware = (props) => {
+  const middleware: Middleware = (props) => {
     const { logDir } = props.config;
     const logger = sqlLogger({ logDir })
 
@@ -34,7 +34,7 @@ const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = (config) => {
 
 
   return {
-    knexMiddleware,
+    middleware,
   }
 }
 
