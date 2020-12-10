@@ -1,11 +1,9 @@
-import { GraphqlMiddleware, ServerError, Context, MiddlewareProps } from '@via-profit-services/core';
-import { Configuration, Knex } from '@via-profit-services/knex';
+import { GraphqlMiddleware, ServerError, Context } from '@via-profit-services/core';
+import { KnexGraphqlMiddleware, Knex } from '@via-profit-services/knex';
 
 import sqlLogger from './knex-logger';
 import knexProvider from './knex-provider';
 
-
-type KnexGraphqlMiddleware = (props: MiddlewareProps & Configuration) => GraphqlMiddleware;
 
 const knexGraphqlMiddleware: KnexGraphqlMiddleware = (props) => {
   const { config } = props;
@@ -20,7 +18,7 @@ const knexGraphqlMiddleware: KnexGraphqlMiddleware = (props) => {
     throw new ServerError('Failed to init Knex middleware', { err });
   }
 
-  const middleware: GraphqlMiddleware = async (resolve, parent, args, context, info) => {
+  const knexMiddleware: GraphqlMiddleware = async (resolve, parent, args, context, info) => {
 
     const composedContext: Context = {
       ...context, // original context
@@ -34,7 +32,9 @@ const knexGraphqlMiddleware: KnexGraphqlMiddleware = (props) => {
     return await resolve(parent, args, composedContext, info);
   }
 
-  return middleware;
+  return {
+    knexMiddleware,
+  };
 }
 
 export default knexGraphqlMiddleware;
