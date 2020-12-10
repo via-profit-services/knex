@@ -5,17 +5,17 @@ import sqlLogger from './knex-logger';
 import knexProvider from './knex-provider';
 
 const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = (config) => {
-  const middleware: Middleware = (props) => {
-    const { logDir } = props.config;
-    const logger = sqlLogger({ logDir })
+  const { logDir } = config;
+  const logger = sqlLogger({ logDir })
 
-    let knex: Knex;
-    try {
-      knex = knexProvider({ logger, config });
+  let knex: Knex;
+  try {
+    knex = knexProvider({ logger, config });
+  } catch (err) {
+    throw new ServerError('Failed to init Knex middleware', { err });
+  }
 
-    } catch (err) {
-      throw new ServerError('Failed to init Knex middleware', { err });
-    }
+  const middleware: Middleware = () => {
     const graphqlMiddleware: GraphqlMiddleware = async (resolve, parent, args, context, info) => {
       const composedContext: Context = {
         ...context, // original context
