@@ -890,7 +890,7 @@ __metadata:
 
 "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core::locator=%40via-profit-services%2Fknex%40workspace%3A.":
   version: 0.31.6
-  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=69263d&locator=%40via-profit-services%2Fknex%40workspace%3A."
+  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core#//home/dhs/Projects/@via-profit-services/core::hash=7ff409&locator=%40via-profit-services%2Fknex%40workspace%3A."
   dependencies:
     bufferutil: ^4.0.2
     content-type: ^1.0.4
@@ -902,6 +902,7 @@ __metadata:
     graphql-middleware: ^4.0.2
     graphql-redis-subscriptions: ^2.2.1
     graphql-subscriptions: ^1.1.0
+    graphql-ws: ^3.0.0
     ioredis: ^4.16.3
     raw-body: ^2.4.1
     session-file-store: ^1.5.0
@@ -921,7 +922,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 0074584db8ae8e9a4d884ee59a0cd480f76b3abc2c25d955c9b8dcf3b3d15a562128ef826797595548dd472c07bffecbc8f68a9d8e77b516372c17702b996641
+  checksum: b2f8757a6a7431188ae7fef1f2dc0a32cd7f981679145b2d9a7c9dc220633d15a35ce36d2ef360e87e3e16e996af2a3e52bda6becdad1e9c13ee0eae7e0e7219
   languageName: node
   linkType: hard
 
@@ -4578,6 +4579,15 @@ fsevents@^1.2.7:
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0
   checksum: 93f62ea9b1d66c5a9a5b43ef510be462b4d64e0e469e9d49b42f9b1343a445902096170f6c58b35988495ae628fd456666254cb2cbf14ea2814bb053c9c84057
+  languageName: node
+  linkType: hard
+
+"graphql-ws@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "graphql-ws@npm:3.0.1"
+  peerDependencies:
+    graphql: ">=0.11 <=15"
+  checksum: c44dbe4f7fae9148872e628e07680d639447aed3df20c837c3a3759e6353f30f5c1a562189444eebe142ed118ae5806c3e7edf69077ebef10de3dd80b0fb4779
   languageName: node
   linkType: hard
 

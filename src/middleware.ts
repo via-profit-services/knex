@@ -1,13 +1,11 @@
-import { GraphqlMiddleware, ServerError, Context, GraphqlMiddlewareFactoryProps } from '@via-profit-services/core';
+import { GraphqlMiddleware, ServerError, Context, MiddlewareProps } from '@via-profit-services/core';
 import { Configuration, Knex } from '@via-profit-services/knex';
 
-import sqlLogger from '../knex-logger';
-import knexProvider from '../knex-provider';
+import sqlLogger from './knex-logger';
+import knexProvider from './knex-provider';
 
 
-type KnexGraphqlMiddleware = (
-  props: GraphqlMiddlewareFactoryProps & Configuration
-) => GraphqlMiddleware;
+type KnexGraphqlMiddleware = (props: MiddlewareProps & Configuration) => GraphqlMiddleware;
 
 const knexGraphqlMiddleware: KnexGraphqlMiddleware = (props) => {
   const { config } = props;
@@ -40,3 +38,4 @@ const knexGraphqlMiddleware: KnexGraphqlMiddleware = (props) => {
 }
 
 export default knexGraphqlMiddleware;
+
