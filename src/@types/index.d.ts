@@ -34,12 +34,10 @@ declare module '@via-profit-services/knex' {
   import {
     OrderBy, DirectionRange, Between,
     TableAliases, Where, WhereValue,
-    Logger, Middleware, OutputSearch, GraphqlMiddleware,
+    Logger, Middleware, OutputSearch,
   } from '@via-profit-services/core';
 
-  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => {
-    middleware: Middleware
-  };
+  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => Middleware;
 
 
   export interface Configuration {
