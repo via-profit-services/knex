@@ -129,10 +129,6 @@ declare module '@via-profit-services/knex' {
   export const DATABASE_CLIENT: string;
   export const DEFAULT_TIMEZONE: string;
 
-  export { Knex };
-  export const knexProvider: KnexProvider;
+  export const factory: KnexGraphqlMiddlewareFactory;
 
-  const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory;
-
-  export default knexMiddlewareFactory;
 }

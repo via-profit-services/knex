@@ -50,7 +50,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/winston", "npm:2.4.4"],
             ["@typescript-eslint/eslint-plugin", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#npm:4.8.2"],
             ["@typescript-eslint/parser", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#npm:4.8.2"],
-            ["@via-profit-services/core", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.5.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."],
+            ["@via-profit-services/core", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.11.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."],
             ["@via-profit-services/eslint-config", "npm:0.1.11"],
             ["cross-env", "npm:6.0.3"],
             ["eslint", "npm:7.14.0"],
@@ -1110,15 +1110,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@via-profit-services/core", [
-        ["virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.5.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A.", {
-          "packageLocation": "./.yarn/$$virtual/@via-profit-services-core-virtual-b2be85a93b/0/cache/@via-profit-services-core-file-a870ddeda2-b37fb0cbe7.zip/node_modules/@via-profit-services/core/",
+        ["virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.11.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A.", {
+          "packageLocation": "./.yarn/$$virtual/@via-profit-services-core-virtual-b91feb9ee2/0/cache/@via-profit-services-core-file-bc519cfc5d-09badcec3e.zip/node_modules/@via-profit-services/core/",
           "packageDependencies": [
-            ["@via-profit-services/core", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.5.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."],
+            ["@via-profit-services/core", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.11.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."],
             ["@types/dataloader", null],
             ["@types/express", null],
             ["@types/graphql", null],
             ["@types/moment", "npm:2.13.0"],
             ["@types/moment-timezone", "npm:0.5.13"],
+            ["@types/supports-color", null],
             ["@types/winston", "npm:2.4.4"],
             ["@types/winston-daily-rotate-file", null],
             ["bufferutil", "npm:4.0.2"],
@@ -1127,6 +1128,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["graphql", null],
             ["moment", "npm:2.29.1"],
             ["moment-timezone", "npm:0.5.32"],
+            ["supports-color", "npm:8.0.0"],
             ["utf-8-validate", "npm:5.0.3"],
             ["winston", "npm:3.3.3"],
             ["winston-daily-rotate-file", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#npm:4.5.0"]
@@ -1137,6 +1139,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/graphql",
             "@types/moment-timezone",
             "@types/moment",
+            "@types/supports-color",
             "@types/winston-daily-rotate-file",
             "@types/winston",
             "dataloader",
@@ -1144,6 +1147,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "graphql",
             "moment-timezone",
             "moment",
+            "supports-color",
             "winston-daily-rotate-file",
             "winston"
           ],
@@ -1177,7 +1181,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/winston", "npm:2.4.4"],
             ["@typescript-eslint/eslint-plugin", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#npm:4.8.2"],
             ["@typescript-eslint/parser", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#npm:4.8.2"],
-            ["@via-profit-services/core", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.5.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."],
+            ["@via-profit-services/core", "virtual:dec5a2868264a20f3428cfc0153aa40fda6786a6b8f5553d1131149c1e618dd6b4c63b5214f558db4aeb82782905a42aaf59a6b9aaa3d55bb338108c7b7bc8ee#file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.11.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."],
             ["@via-profit-services/eslint-config", "npm:0.1.11"],
             ["cross-env", "npm:6.0.3"],
             ["eslint", "npm:7.14.0"],
