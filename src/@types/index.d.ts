@@ -42,8 +42,6 @@ declare module '@via-profit-services/knex' {
 
   export interface Configuration {
 
-    logDir: string;
-
     /**
      * PostgreSQL connection config
      */

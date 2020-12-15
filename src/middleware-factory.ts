@@ -10,27 +10,34 @@ interface Pool {
   context: Context;
 }
 
-const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = (config) => {
-  const { logDir } = config;
-  const logger = sqlLogger({ logDir });
+const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = (configuration) => {
 
   const pool: Pool = {
     knex: null,
     context: null,
   };
 
-  try {
-    pool.knex = knexProvider({ logger, config });
-  } catch (err) {
-    throw new ServerError('Failed to init Knex middleware', { err });
-  }
 
-  const middleware: Middleware = ({ context }) => {
+  const middleware: Middleware = ({ context, config }) => {
 
     // prevent to combine context twice
     if (pool.context) {
       return pool;
     }
+
+    const { logDir } = config;
+    const logger = sqlLogger({ logDir });
+
+    try {
+      pool.knex = knexProvider({
+        logger,
+        config: configuration,
+      });
+
+    } catch (err) {
+      throw new ServerError('Failed to init Knex middleware', { err });
+    }
+
 
     pool.context = {
       ...context, // original context
