@@ -1,11 +1,38 @@
-import { Where, applyAliases, ServerError } from '@via-profit-services/core';
+import { Where, ServerError, WhereField } from '@via-profit-services/core';
 import {
   ConvertOrderByToKnex, ConvertJsonToKnex, ConvertBetweenToKnex,
-  ConvertWhereToKnex, ConvertSearchToKnex,
+  ConvertWhereToKnex, ConvertSearchToKnex, ApplyAliases,
 } from '@via-profit-services/knex';
 import moment from 'moment-timezone';
 
 import { DEFAULT_TIMEZONE } from '../constants';
+
+export const applyAliases: ApplyAliases = (whereClause, aliases) => {
+  const aliasesMap = new Map<string, string>();
+  Object.entries(aliases).forEach(([tableName, field]) => {
+    const fieldsArray = Array.isArray(field) ? field : [field];
+    fieldsArray.forEach((fieldName) => {
+      aliasesMap.set(fieldName, tableName);
+    });
+  });
+
+  const newWhere = whereClause.map((data) => {
+    const [field, action, value] = data;
+    const alias = aliasesMap.get(field) || aliasesMap.get('*');
+
+    const whereField: WhereField = [
+      alias ? `${alias}.${field}` : field,
+      action,
+      value,
+    ];
+
+    return whereField;
+  });
+
+  return newWhere;
+};
+
+
 /**
  * Convert GraphQL OrderBy array to Knex OrderBy array format
  */

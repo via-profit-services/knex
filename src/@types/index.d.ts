@@ -33,9 +33,24 @@ declare module '@via-profit-services/knex' {
   import type Knex from 'knex';
   import {
     OrderBy, DirectionRange, Between,
-    TableAliases, Where, WhereValue,
+    Where, WhereValue,
     Logger, Middleware, OutputSearch,
   } from '@via-profit-services/core';
+
+
+  /**
+   * Table aliases map
+   * Key - is a alias name \
+   * Value - is a field alias name or array of names \
+   * Use asterisk (\*) for default alias name. \
+   * For example: {\
+   * books: ['title', 'length'],\
+   * info: ['*'],\
+   * }
+   */
+  export type TableAliases = {
+    [key: string]: string | string[];
+  };
 
   export type KnexGraphqlMiddlewareFactory = (config: Configuration) => Middleware;
 
@@ -75,6 +90,9 @@ declare module '@via-profit-services/knex' {
     pool?: Knex.PoolConfig;
   }
 
+
+  export type ApplyAliases = (whereClause: Where, aliases: TableAliases) => Where;
+
   export interface KnexProviderProps {
     config: Configuration;
     logger: Logger;
@@ -87,6 +105,7 @@ declare module '@via-profit-services/knex' {
     column: string;
     order: DirectionRange;
   }[];
+
 
   export type ConvertOrderByToKnex = (orderBy: OrderBy | undefined) => OrderByKnex;
   export type ConvertJsonToKnex = <TRecord = any>(knex: Knex, json: any | any[]) => Knex.Raw<TRecord>;
@@ -117,12 +136,46 @@ declare module '@via-profit-services/knex' {
     totalCount: number;
   }
 
+  /**
+   * Convert ObderBy array to Knex Order by format
+   */
   export const convertOrderByToKnex: ConvertOrderByToKnex;
+
+  /**
+   * Convert JSON string to Knex Raw 
+   */
   export const convertJsonToKnex: ConvertJsonToKnex;
   export const convertBetweenToKnex: ConvertBetweenToKnex;
   export const convertWhereToKnex: ConvertWhereToKnex;
   export const convertSearchToKnex: ConvertSearchToKnex;
+  
+  /**
+   * Apply aliases map to where clause array
+   */
+  export const applyAliases: ApplyAliases;
+
+  /**
+   * Extract `totalCount` property from array of Nodes\
+   * Convert this:
+   * ```js
+   * [
+   *  {id: '1', createdAt: 'XXX', updatedAt: 'XXX', totalCount: 2 },
+   *  {id: '2', createdAt: 'XXX', updatedAt: 'XXX', totalCount: 2 },
+   * ]
+   * ```
+   * To:
+   * ```js
+   * {
+   *   totalCount: 2,
+   *   nodes: [
+   *      { id: '1', createdAt: 'XXX', updatedAt: 'XXX' },
+   *      { id: '2', createdAt: 'XXX', updatedAt: 'XXX' },
+   *   ],
+   * }
+   * ```
+   */
   export const extractTotalCountPropOfNode: ExtractTotalCountPropOfNode;
+
   export const DATABASE_CHARSET: string;
   export const DATABASE_CLIENT: string;
   export const DEFAULT_TIMEZONE: string;
