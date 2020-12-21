@@ -15,7 +15,7 @@ const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
   entry: {
     index: path.resolve(__dirname, '../src/index.ts'),
     'webpack-utils': path.resolve(__dirname, '../src/webpack-utils/index.ts'),
-    'export-migrations.ts': path.resolve(__dirname, '../src/migration-utils/export-migrations.ts'),
+    'export-migrations': path.resolve(__dirname, '../src/migration-utils/export-migrations.ts'),
   },
   output: {
     path: path.join(__dirname, '../dist/'),
