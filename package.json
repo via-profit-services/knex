@@ -1,7 +1,7 @@
 {
     "name": "@via-profit-services/knex",
     "support": "https://via-profit.ru",
-    "version": "0.1.0-rc.12",
+    "version": "0.1.0-rc.14",
     "description": "Via Profit Knex provider",
     "main": "dist/index.js",
     "engines": {
@@ -13,7 +13,8 @@
         "database",
         "migrations",
         "via-profit",
-        "graphql"
+        "graphql",
+        "postgres"
     ],
     "scripts": {
         "dist": "yarn lint && yarn test && yarn build:dist",
@@ -45,12 +46,6 @@
         "Pavel Natalin <trubonru@gmail.com>"
     ],
     "license": "MIT",
-    "dependencies": {
-        "pg": "^8.5.1",
-        "pg-hstore": "^2.3.3",
-        "pg-listen": "^1.6.0",
-        "supports-color": "^8.0.0"
-    },
     "devDependencies": {
         "@types/jest": "^24.0.23",
         "@types/moment": "^2.13.0",
@@ -65,7 +60,7 @@
         "@types/winston": "^2.4.4",
         "@typescript-eslint/eslint-plugin": "^4.6.1",
         "@typescript-eslint/parser": "^4.6.1",
-        "@via-profit-services/core": "file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.18.tgz",
+        "@via-profit-services/core": "file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.43.tgz",
         "@via-profit-services/eslint-config": "^0.1.11",
         "cross-env": "^6.0.3",
         "eslint": "^7.12.1",
@@ -96,7 +91,6 @@
         "webpack": "^5.9.0",
         "webpack-bundle-analyzer": "^4.2.0",
         "webpack-cli": "^4.2.0",
-        "webpack-dev-server": "^3.11.0",
         "webpack-merge": "^5.4.0",
         "winston": "^3.3.3",
         "winston-daily-rotate-file": "^4.5.0"
@@ -104,9 +98,6 @@
     "peerDependencies": {
         "@via-profit-services/core": "*",
         "knex": "*",
-        "moment": "*",
-        "moment-timezone": "*",
-        "winston": "*",
-        "winston-daily-rotate-file": "*"
+        "pg": "^8.5.1"
     }
 }
