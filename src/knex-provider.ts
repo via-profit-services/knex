@@ -53,7 +53,7 @@ const knexProvider: KnexProvider = (props) => {
 
   const knexPool: Knex.PoolConfig = {
     ...pool,
-    afterCreate: (conn: any, done: any) => {
+    afterCreate: pool.afterCreate ? pool.afterCreate : (conn: any, done: any) => {
       conn.query(
         `
           SET TIMEZONE = '${timezone || DEFAULT_TIMEZONE}';
@@ -65,8 +65,7 @@ const knexProvider: KnexProvider = (props) => {
             logger.debug('Connection error', { err });
           } else {
 
-            logger.debug(`The TIMEZONE was set to "${timezone || DEFAULT_TIMEZONE}"`);
-            logger.debug(`The charset was set to "${DATABASE_CHARSET}"`);
+            logger.debug(`Database connection is OK. TIMEZONE=${timezone || DEFAULT_TIMEZONE}. CLIENT_ENCODING=${DATABASE_CHARSET}`);
           }
 
           done(err, conn);

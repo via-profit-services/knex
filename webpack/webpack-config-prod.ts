@@ -71,6 +71,10 @@ Contact    ${packageInfo.support}
     /^winston$/,
     /^winston-daily-rotate-file$/,
 
+    /^pg$/,
+    /^pg-hstore$/,
+    /^pg-listen$/,
+
     ...knexExternals,
   ],
 });

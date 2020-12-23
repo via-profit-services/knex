@@ -46,9 +46,11 @@ export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy) => {
 };
 
 
-export const convertJsonToKnex: ConvertJsonToKnex = (knex, json) => {
+export const convertJsonToKnex: ConvertJsonToKnex = (knex, data) => {
   try {
-    const jsonString = `'${JSON.stringify(json)}'::jsonb`;
+    const jsonString = typeof data === 'string'
+      ? `'${data}'::jsonb`
+      : `'${JSON.stringify(data)}'::jsonb`;
 
     return knex.raw(jsonString);
   } catch (err) {
