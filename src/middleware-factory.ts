@@ -1,4 +1,4 @@
-import { Middleware, ServerError } from '@via-profit-services/core';
+import { Middleware } from '@via-profit-services/core';
 import { KnexGraphqlMiddlewareFactory } from '@via-profit-services/knex';
 
 import sqlLogger from './knex-logger';
