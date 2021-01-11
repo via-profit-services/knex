@@ -53,7 +53,7 @@ const knexProvider: KnexProvider = (props) => {
 
   const knexPool: Knex.PoolConfig = {
     ...pool,
-    afterCreate: pool.afterCreate ? pool.afterCreate : (conn: any, done: any) => {
+    afterCreate: pool?.afterCreate ? pool.afterCreate : (conn: any, done: any) => {
       conn.query(
         `
           SET TIMEZONE = '${timezone || DEFAULT_TIMEZONE}';
