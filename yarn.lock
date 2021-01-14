@@ -871,9 +871,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.50.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A.":
-  version: 0.31.6-rc.50
-  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.50.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."
+"@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core/package-1.0.0-rc.1.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A.":
+  version: 1.0-rc.1
+  resolution: "@via-profit-services/core@file://home/dhs/Projects/@via-profit-services/core/package-1.0.0-rc.1.tgz::locator=%40via-profit-services%2Fknex%40workspace%3A."
   dependencies:
     bufferutil: ^4.0.2
     content-type: ^1.0.4
@@ -892,7 +892,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: dfa5f277559e73c89b32ca2e3046a87f80d52f849f062fe1aa9e3a39df4ff27abd75f06a1aec55f69049662e648e79062ec9b0c1d65c0bdeca487e9f04e6f0b3
+  checksum: 061625c2014e55f7e07cbc7235bb240d44513388b3f0ca3ce35d33e45f78c887340db9f87a0ed92912d59764a5d032b21f988c7eba4ea26e368be90c6aa1eda9
   languageName: node
   linkType: hard
 
@@ -920,7 +920,7 @@ __metadata:
     "@types/winston": ^2.4.4
     "@typescript-eslint/eslint-plugin": ^4.6.1
     "@typescript-eslint/parser": ^4.6.1
-    "@via-profit-services/core": "file://home/dhs/Projects/@via-profit-services/core/package-0.31.6-rc.50.tgz"
+    "@via-profit-services/core": "file://home/dhs/Projects/@via-profit-services/core/package-1.0.0-rc.1.tgz"
     "@via-profit-services/eslint-config": ^0.1.11
     cross-env: ^6.0.3
     eslint: ^7.12.1
@@ -955,8 +955,8 @@ __metadata:
     winston: ^3.3.3
     winston-daily-rotate-file: ^4.5.0
   peerDependencies:
-    "@via-profit-services/core": "*"
-    knex: "*"
+    "@via-profit-services/core": 1.x.x
+    knex: 1.x.x
     pg: ^8.5.1
   languageName: unknown
   linkType: soft
