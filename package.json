@@ -97,7 +97,7 @@
     },
     "peerDependencies": {
         "@via-profit-services/core": "1.x.x",
-        "knex": "1.x.x",
+        "knex": "^0.21.12",
         "pg": "^8.5.1"
     }
 }
