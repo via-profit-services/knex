@@ -1,5 +1,7 @@
 import { WebpackPluginInstance, Compiler } from 'webpack';
 
+import externals from './knex-externals';
+
 interface CheckIgnoreArgs {
   request: string;
   context: string;
@@ -13,11 +15,9 @@ type IgnoreModules = {
 class ViaProfitKnexWebpackPlugin implements WebpackPluginInstance {
 
   // ignore webpack plugin template
-  ignoreModules: IgnoreModules = [
-    { resourceRegExp: /m[sy]sql2?|oracle(db)?|sqlite3/ },
-    { resourceRegExp: /pg-native/ },
-    { resourceRegExp: /pg-query-stream/ },
-  ];
+  ignoreModules: IgnoreModules = externals.map((resourceRegExp) => ({
+    resourceRegExp,
+  }));
 
   constructor() {
     this.checkIgnore = this.checkIgnore.bind(this);

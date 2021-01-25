@@ -1,6 +1,8 @@
 import {
-  Winston, LoggersConfig, logFormatter, LOG_DATE_PATTERNT, LOG_MAX_SIZE, LOG_MAX_FILES,
+  LoggersConfig, logFormatter, LOG_DATE_PATTERNT, LOG_MAX_SIZE, LOG_MAX_FILES,
 } from '@via-profit-services/core';
+import Winston from 'winston';
+import 'winston-daily-rotate-file';
 
 import { LOG_FILENAME_SQL } from './constants';
 

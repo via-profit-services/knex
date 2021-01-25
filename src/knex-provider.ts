@@ -1,56 +1,30 @@
-import { Winston, ServerError } from '@via-profit-services/core';
-import { Knex } from 'index';
-import knex, { PgConnectionConfig, MigratorConfig, SeederConfig, PoolConfig } from 'knex';
+import { ServerError } from '@via-profit-services/core';
+import type { KnexProvider } from '@via-profit-services/knex';
+
+import type Knex from 'knex';
+import knex from 'knex';
 import moment from 'moment-timezone';
 import { performance } from 'perf_hooks';
 import { types } from 'pg';
 
 import { DATABASE_CHARSET, DATABASE_CLIENT, DEFAULT_TIMEZONE, ENABLE_PG_TYPES } from './constants';
 
-export interface Configuration {
-
-  /**
-   * PostgreSQL connection config
-   */
-  connection: PgConnectionConfig;
-
-  /**
-   * Database server timezone\
-   * \
-   * Default: `UTC`
-   */
-  timezone?: string;
-
-  /**
-   * **Local** server timezone\
-   * Used for convert `timestamp` and `timestamptz` entities to local `Date`\
-   * If `enablePgTypes` is false then this property not used\
-   * \
-   * Default: `UTC`
-   */
-  localTimezone?: string;
-
-  /**
-   * Used for convert `timestamp` and `timestamptz` entities to local `Date`\
-   * This option use `localTimezone` property\
-   * \
-   * Default: `true`
-   */
-  enablePgTypes?: boolean;
-  migrations?: MigratorConfig;
-  seeds?: SeederConfig;
-  pool?: PoolConfig;
+interface Times {
+  [key: string]: {
+    startTime: number;
+  };
 }
 
-export interface KnexProviderProps {
-  config: Configuration;
-  logger: Winston.Logger;
+type KnexQuery = {
+  __knexQueryUid: string;
+  sql: string;
+  bindings: any;
 }
 
-const knexProvider = (props: KnexProviderProps) => {
+const knexProvider: KnexProvider = (props) => {
   const { config, logger } = props;
   const { connection, timezone, localTimezone, pool, enablePgTypes } = config;
-  const times: { [key: string]: any } = {};
+  const times: Times = {};
   const usePgTypes = typeof enablePgTypes === 'undefined' ? ENABLE_PG_TYPES : enablePgTypes;
 
   if (usePgTypes) {
@@ -79,7 +53,7 @@ const knexProvider = (props: KnexProviderProps) => {
 
   const knexPool: Knex.PoolConfig = {
     ...pool,
-    afterCreate: (conn: any, done: any) => {
+    afterCreate: pool?.afterCreate ? pool.afterCreate : (conn: any, done: any) => {
       conn.query(
         `
           SET TIMEZONE = '${timezone || DEFAULT_TIMEZONE}';
@@ -91,8 +65,7 @@ const knexProvider = (props: KnexProviderProps) => {
             logger.debug('Connection error', { err });
           } else {
 
-            logger.debug(`The TIMEZONE was set to "${timezone || DEFAULT_TIMEZONE}"`);
-            logger.debug(`The charset was set to "${DATABASE_CHARSET}"`);
+            logger.debug(`Database connection is OK. TIMEZONE=${timezone || DEFAULT_TIMEZONE}. CLIENT_ENCODING=${DATABASE_CHARSET}`);
           }
 
           done(err, conn);
@@ -101,39 +74,33 @@ const knexProvider = (props: KnexProviderProps) => {
     },
   };
 
-  const instance = knex({
-    client: DATABASE_CLIENT,
-    connection,
-    pool: knexPool,
-  });
 
+  const knexOnQueryListener = (query: KnexQuery) => {
+    const { __knexQueryUid } = query;
 
-  instance
-    .on('query', (query) => {
-      // eslint-disable-next-line no-underscore-dangle
-      const uid = query.__knexQueryUid;
+    times[__knexQueryUid] = {
+      startTime: performance.now(),
+    };
+  }
 
-      times[uid] = {
-        startTime: performance.now(),
-      };
-    })
-    .on('query-response', (response, query, builder) => {
-      // eslint-disable-next-line no-underscore-dangle
-      const uid = query.__knexQueryUid;
-      const queryTime = performance.now() - times[uid].startTime;
+  const knexOnQueryResponseListener = (response: any, query: KnexQuery, builder: any) => {
+    const { __knexQueryUid } = query;
+    const queryTime = performance.now() - (times[__knexQueryUid]?.startTime || 0);
 
-      logger.debug(builder.toString(), { queryTime });
-    })
-    .on('query-error', (err, query) => {
-      logger.error(query.sql, { err, bindings: query.bindings });
-    });
+    logger.debug(builder.toString(), { queryTime });
+  }
 
-  instance
+  const knexOnQueryErrorListener = (err: Error, query: KnexQuery) => {
+    logger.error(query.sql, { err, bindings: query.bindings });
+  }
+
+  const checkConnection = async (knexHandle: Knex): Promise<void> => {
+    logger.debug('Check connection');
+
+    return knexHandle
     .raw('SELECT 1+1 AS result')
     .then(() => {
       logger.debug('Test the Database connection by trying to authenticate is OK');
-
-      return true;
     })
     .catch((err) => {
       logger.error(err.name, err);
@@ -141,8 +108,26 @@ const knexProvider = (props: KnexProviderProps) => {
         'Database connection failure. Please check your database connection details. Make sure that the database is working properly.',
       );
     });
+  }
 
-  return instance;
+
+  try {
+    const instance = knex({
+      client: DATABASE_CLIENT,
+      connection,
+      pool: knexPool,
+    });
+
+    instance.on('query', knexOnQueryListener);
+    instance.on('query-response', knexOnQueryResponseListener);
+    instance.on('query-error', knexOnQueryErrorListener);
+
+    checkConnection(instance);
+
+    return instance;
+  } catch (err) {
+    throw new ServerError('Knex initialization failure', { err });
+  }
 }
 
 export default knexProvider;

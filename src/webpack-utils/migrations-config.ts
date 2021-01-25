@@ -2,24 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import { Configuration, Entry } from 'webpack';
 
-import ViaProfitKnexWebpackPligin from './plugin';
+import { MigrationConfigFactory, MigrationsConfigProps } from '../@types/webpack-utils';
+import knexExternals from './knex-externals';
 
-interface MigrationsConfigProps {
-  knexfile?: string;
-  prefix?: string;
-  migrationsSourceDir?: string;
-  seedsSourceDir?: string;
-}
 
-type DefaultMigrationsConfigProps = Required<MigrationsConfigProps>;
+const migrationsConfig: MigrationConfigFactory = (props) => {
 
-const migrationsConfig = (props?: MigrationsConfigProps) => {
-
-  const defaultProps: DefaultMigrationsConfigProps = {
+  const defaultProps: Required<MigrationsConfigProps> = {
     prefix: '.knex',
-    knexfile: path.resolve(process.cwd(), './utils/knexfile.ts'),
-    migrationsSourceDir: path.resolve(process.cwd(), './database/migrations'),
-    seedsSourceDir: path.resolve(process.cwd(), './database/seeds'),
+    knexfile: path.resolve(process.cwd(), './src/utils/knexfile.ts'),
+    migrationsSourceDir: path.resolve(process.cwd(), './src/database/migrations'),
+    seedsSourceDir: path.resolve(process.cwd(), './src/database/seeds'),
   };
 
   const config = {
@@ -52,8 +45,11 @@ const migrationsConfig = (props?: MigrationsConfigProps) => {
     entry.knexfile = knexfile;
   }
 
+  // eslint-disable-next-line no-console
+  console.log('entry', Object.keys(entry));
+
   const webpackConfig: Configuration = {
-    mode: 'development',
+    mode: 'production',
     optimization: {
       minimize: false,
     },
@@ -63,11 +59,9 @@ const migrationsConfig = (props?: MigrationsConfigProps) => {
       filename: '[name].js',
       libraryTarget: 'commonjs2',
     },
-    plugins: [
-      new ViaProfitKnexWebpackPligin(),
-    ],
     externals: [
-      /^@via-profit-services\//,
+      ...knexExternals,
+      /@via-profit-services\/knex/,
     ],
   };
 

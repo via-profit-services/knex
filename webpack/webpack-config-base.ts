@@ -11,9 +11,6 @@ const webpackBaseConfig: Configuration = {
           {
             loader: 'ts-loader',
           },
-          {
-            loader: 'shebang-loader', // Fix Unexpected character '#' in #!/usr/bin/env node
-          },
         ],
       },
     ],
@@ -23,8 +20,7 @@ const webpackBaseConfig: Configuration = {
     __dirname: true,
   },
   resolve: {
-    // .mjs needed for https://github.com/graphql/graphql-js/issues/1272
-    extensions: ['.ts', '.mjs', '.js', '.json', '.gql', '.graphql'],
+    extensions: ['.ts', '.js', '.json'],
   },
 };
 
