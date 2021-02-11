@@ -36,13 +36,25 @@ export const applyAliases: ApplyAliases = (whereClause, aliases) => {
 /**
  * Convert GraphQL OrderBy array to Knex OrderBy array format
  */
-export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy) => {
+export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy, aliases) => {
   const orderByArray = [...(orderBy || [])];
 
-  return orderByArray.map(({ field, direction }) => ({
-    column: field,
-    order: direction,
-  }))
+  const aliasesMap = new Map<string, string>();
+  Object.entries(aliases || {}).forEach(([tableName, field]) => {
+    const fieldsArray = Array.isArray(field) ? field : [field];
+    fieldsArray.forEach((fieldName) => {
+      aliasesMap.set(fieldName, tableName);
+    });
+  });
+
+  return orderByArray.map(({ field, direction }) => {
+    const alias = aliasesMap.get(field) || aliasesMap.get('*');
+
+    return {
+      column: alias ? `${alias}.${field}` : field,
+      order: direction,
+    }
+  })
 };
 
 
