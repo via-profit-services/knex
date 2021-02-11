@@ -110,7 +110,10 @@ declare module '@via-profit-services/knex' {
   }[];
 
 
-  export type ConvertOrderByToKnex = (orderBy: OrderBy | undefined) => OrderByKnex;
+  export type ConvertOrderByToKnex = (
+    orderBy: OrderBy | undefined,
+    aliases?: TableAliases,
+  ) => OrderByKnex;
   export type ConvertJsonToKnex = <TRecord = unknown>(knex: Knex, data: unknown | string) => Knex.Raw<TRecord>;
   export type ConvertBetweenToKnex = (
     builder: Knex.QueryBuilder,
