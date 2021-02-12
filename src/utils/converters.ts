@@ -60,11 +60,11 @@ export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy, aliases) => 
 
 export const convertJsonToKnex: ConvertJsonToKnex = (knex, data) => {
   try {
-    const jsonString = typeof data === 'string'
-      ? `'${data}'::jsonb`
-      : `'${JSON.stringify(data)}'::jsonb`;
+    const str = typeof data === 'string'
+      ? data
+      : JSON.stringify(data);
 
-    return knex.raw(jsonString);
+    return knex.raw('?::jsonb', [str]);
   } catch (err) {
     throw new ServerError(
       'Json field convertation failure. Check the «convertJsonToKnex» passed params',
@@ -167,7 +167,7 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search) => {
     try {
       search.forEach(({ field, query }) => {
         query.split(' ').map((subquery) =>
-          builder.orWhereRaw(`"${field}"::text ilike '%${subquery}%'`),
+          builder.orWhereRaw('??::text ilike ?', [field, `%${subquery}%`]),
         );
       });
     } catch (err) {
