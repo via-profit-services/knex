@@ -262,10 +262,15 @@ const search = [{
   query: 'kitchen',
 }];
 
+// You can use aliases
+const aliases = {
+  books: ['title'],
+};
+
 await knex
   .select(['*'])
   .from('books')
-  .where((builder) => convertSearchToKnex(builder, search));
+  .where((builder) => convertSearchToKnex(builder, search, aliases));
 
 ```
 
