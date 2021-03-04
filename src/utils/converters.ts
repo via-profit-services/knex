@@ -162,20 +162,47 @@ export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, al
   return builder;
 };
 
-export const convertSearchToKnex: ConvertSearchToKnex = (builder, search) => {
-  if (search) {
-    try {
-      search.forEach(({ field, query }) => {
-        query.split(' ').map((subquery) =>
-          builder.orWhereRaw('??::text ilike ?', [field, `%${subquery}%`]),
-        );
-      });
-    } catch (err) {
-      throw new ServerError(
-        'Search field convertation failure. Check the «convertSearchToKnex» passed params',
-        { err });
-    }
+export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliases) => {
+  if (!search || !search.length) {
+    return builder;
   }
 
-  return builder;
+  try {
+    const searchFields: Record<string, string[]> = {};
+    const aliasesMap = new Map<string, string>();
+
+    // fill aliasesMap
+    Object.entries(aliases || {}).forEach(([tableName, field]) => {
+      const fieldsArray = Array.isArray(field) ? field : [field];
+      fieldsArray.forEach((fieldName) => {
+        aliasesMap.set(fieldName, tableName);
+      });
+    });
+
+    // Group search queries by field name
+    search.forEach(({ field, query }) => {
+      const data = searchFields[field] || [];
+      const queries = query.trim().split(' ');
+      searchFields[field] = data.concat(queries);
+    });
+
+    Object.entries(searchFields).forEach(([field, queries]) => {
+      builder.andWhere((andWhereBuilder) => {
+        queries.forEach((query) => {
+          const alias = aliasesMap.get(field) || aliasesMap.get('*');
+          const column = alias ? `${alias}.${field}` : field;
+          andWhereBuilder.orWhereRaw('??::text ilike ?', [column, `%${query}%`]);
+        });
+
+        return andWhereBuilder;
+      })
+    })
+
+    return builder;
+
+  } catch (err) {
+    throw new ServerError(
+      'Search field convertation failure. Check the «convertSearchToKnex» passed params',
+      { err });
+  }
 }
