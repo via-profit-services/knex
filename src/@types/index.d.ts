@@ -132,6 +132,7 @@ declare module '@via-profit-services/knex' {
   export type ConvertSearchToKnex = (
     builder: Knex.QueryBuilder,
     search: OutputSearch | false | undefined | null,
+    aliases?: TableAliases,
   ) => Knex.QueryBuilder<any, any>;
 
 
