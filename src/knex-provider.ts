@@ -21,7 +21,20 @@ type KnexQuery = {
   bindings: any;
 }
 
+type Cache = {
+  instance: Knex;
+};
+
+const cache: Cache = {
+  instance: null,
+}
+
 const knexProvider: KnexProvider = (props) => {
+
+  if (cache.instance) {
+    return cache.instance;
+  }
+
   const { config, logger } = props;
   const { connection, timezone, localTimezone, pool, enablePgTypes } = config;
   const times: Times = {};
@@ -112,19 +125,19 @@ const knexProvider: KnexProvider = (props) => {
 
 
   try {
-    const instance = knex({
+    cache.instance = knex({
       client: DATABASE_CLIENT,
       connection,
       pool: knexPool,
     });
 
-    instance.on('query', knexOnQueryListener);
-    instance.on('query-response', knexOnQueryResponseListener);
-    instance.on('query-error', knexOnQueryErrorListener);
+    cache.instance.on('query', knexOnQueryListener);
+    cache.instance.on('query-response', knexOnQueryResponseListener);
+    cache.instance.on('query-error', knexOnQueryErrorListener);
 
-    checkConnection(instance);
+    checkConnection(cache.instance);
 
-    return instance;
+    return cache.instance;
   } catch (err) {
     throw new ServerError('Knex initialization failure', { err });
   }
