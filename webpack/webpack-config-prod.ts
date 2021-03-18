@@ -5,7 +5,6 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 
 import packageInfo from '../package.json';
-import { knexExternals } from '../src/webpack-utils';
 import webpackBaseConfig from './webpack-config-base';
 
 const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
@@ -62,20 +61,6 @@ Contact    ${packageInfo.support}
 
       },
     },
-  ],
-  externals: [
-    /^@via-profit-services\/core$/,
-    /^moment-timezone$/,
-    /^moment$/,
-    /^knex$/,
-    /^winston$/,
-    /^winston-daily-rotate-file$/,
-
-    /^pg$/,
-    /^pg-hstore$/,
-    /^pg-listen$/,
-
-    ...knexExternals,
   ],
 });
 
