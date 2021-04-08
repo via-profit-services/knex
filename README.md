@@ -330,6 +330,31 @@ To:
 }
 ```
 
+### extractTotalCountPropOfNode
+
+Generate and execute request of insert or conflict (...) do update.
+
+If `chunkSize` is passed then data array will be chunked
+
+Example:
+
+```js
+import { insertOrUpdateLargeData } from '@via-profit-services/knex';
+import type Knex from 'knex';
+
+export async function seed (knex: Knex) {
+  await insertOrUpdateLargeData({
+    knex,
+    tableName: 'myTable',
+    constraint: '(id, name)',
+    chunkSize: 300,
+    data: [
+      { id: 'b912e19b-9b9a-4b84-a5d0-1c0897fb76d1', name: 'Ivan', surname: 'Petrov' },
+      { id: '60c249a8-ae40-4a7e-940a-743b42ba194e', name: 'Oleg', surname: 'Sidorov' }    ],
+  });
+}
+```
+
 ### DATABASE_CHARSET
 
 Database charset (`UTF8`)
