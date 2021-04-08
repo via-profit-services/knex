@@ -143,16 +143,16 @@ declare module '@via-profit-services/knex' {
     totalCount: number;
   }
 
-  export type ArrayChunk = <T extends Record<string, any>[]>(
+  export type ArrayChunk = <T extends Record<string, any>>(
     array: T[],
     chunkSize: number
   ) => T[][];
 
 
-  export type InsertOrUpdate = <T extends Record<string, any>[]>(params: {
+  export type InsertOrUpdate = <T extends Record<string, any>>(params: {
     knex: Knex;
     tableName: string;
-    data: Array<T>;
+    data: T[];
     constraint?: string;
     chunkSize?: number;
   }) => Promise<void>;
