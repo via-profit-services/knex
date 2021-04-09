@@ -93,8 +93,18 @@ declare module '@via-profit-services/knex' {
     migrations?: Omit<Knex.MigratorConfig, 'database'>;
     seeds?: Omit<Knex.SeederConfig, 'variables'>;
     pool?: Omit<Knex.PoolConfig, 'name' | 'log' | 'refreshIdle' | 'returnToHead' | 'priorityRange'>;
+
+    /**
+     * When the specified query execution speed limits are reached,\
+     * Knex provider will mark the corresponding query as normal, slow or panic
+     */
+    queryTimeLimit?: QueryTimeConfig;
   }
 
+  export type QueryTimeConfig = {
+    slow?: number;
+    panic?: number;
+  };
 
   export type ApplyAliases = (whereClause: Where, aliases: TableAliases) => Where;
 

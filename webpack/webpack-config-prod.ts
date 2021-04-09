@@ -10,6 +10,7 @@ import webpackBaseConfig from './webpack-config-base';
 const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
   optimization: {
     minimize: false,
+    nodeEnv: false,
   },
   entry: {
     index: path.resolve(__dirname, '../src/index.ts'),

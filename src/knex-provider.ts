@@ -1,5 +1,5 @@
 import { ServerError } from '@via-profit-services/core';
-import type { KnexProvider } from '@via-profit-services/knex';
+import type { KnexProvider, QueryTimeConfig } from '@via-profit-services/knex';
 
 import type { Knex } from 'knex';
 import knex from 'knex';
@@ -7,7 +7,10 @@ import moment from 'moment-timezone';
 import { performance } from 'perf_hooks';
 import { types } from 'pg';
 
-import { DATABASE_CHARSET, DATABASE_CLIENT, DEFAULT_TIMEZONE, ENABLE_PG_TYPES } from './constants';
+import {
+  DATABASE_CHARSET, DATABASE_CLIENT, DEFAULT_TIMEZONE, ENABLE_PG_TYPES,
+  QUERY_TIME_LIMIT_PANIC, QUERY_TIME_LIMIT_SLOW,
+} from './constants';
 
 interface Times {
   [key: string]: {
@@ -36,7 +39,7 @@ const knexProvider: KnexProvider = (props) => {
   }
 
   const { config, logger } = props;
-  const { connection, timezone, localTimezone, pool, enablePgTypes } = config;
+  const { connection, timezone, localTimezone, pool, enablePgTypes, queryTimeLimit } = config;
   const times: Times = {};
   const usePgTypes = typeof enablePgTypes === 'undefined' ? ENABLE_PG_TYPES : enablePgTypes;
 
@@ -87,6 +90,12 @@ const knexProvider: KnexProvider = (props) => {
     },
   };
 
+  const queryTimeConfig: QueryTimeConfig = {
+    slow: QUERY_TIME_LIMIT_SLOW,
+    panic: QUERY_TIME_LIMIT_PANIC,
+    ...queryTimeLimit,
+  };
+
 
   const knexOnQueryListener = (query: KnexQuery) => {
     const { __knexQueryUid } = query;
@@ -96,11 +105,29 @@ const knexProvider: KnexProvider = (props) => {
     };
   }
 
-  const knexOnQueryResponseListener = (response: any, query: KnexQuery, builder: any) => {
+  const knexOnQueryResponseListener = (response: any, query: KnexQuery, builder: Knex.QueryBuilder) => {
     const { __knexQueryUid } = query;
-    const queryTime = performance.now() - (times[__knexQueryUid]?.startTime || 0);
+    const queryTimeMs = performance.now() - (times[__knexQueryUid]?.startTime || 0);
+    let queryTimeLabel = '[normal]';
 
-    logger.debug(builder.toString(), { queryTime });
+    if (queryTimeMs > queryTimeConfig.panic) {
+      queryTimeLabel = '[panic] ';
+    }
+
+    if (queryTimeMs > queryTimeConfig.slow) {
+      queryTimeLabel = '[slow]  ';
+    }
+
+    if (process.env.NODE_ENV === 'development' && queryTimeLabel !== '[normal]') {
+      console.log(
+        '\x1b[33m%s\x1b[0m \x1b[34m%s\x1b[0m \x1b[90m%s\x1b[0m',
+        'SQL slow query at',
+        `${queryTimeMs.toFixed(3)} ms`,
+        `${builder.toString().substr(0, 70)}...`,
+      )
+    }
+
+    logger.debug(`${queryTimeLabel} ${queryTimeMs.toFixed(3)} ms: ${builder.toString()}`);
   }
 
   const knexOnQueryErrorListener = (err: Error, query: KnexQuery) => {
