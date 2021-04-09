@@ -135,6 +135,9 @@ const versionResolver = async (parent, args, context) => {
    - **createTimeoutMillis** `number`. Create operations are cancelled after this many milliseconds if a resource cannot be acquired. Default: `30000`.
    - **destroyTimeoutMillis** `number`. Destroy operations are awaited for at most this many milliseconds new resources will be created after this timeout. Default: `5000`.
    - **acquireTimeoutMillis** `number`. Acquire promises are rejected after this many milliseconds if a resource cannot be acquired. Default: `30000`.
+ - **queryTimeLimit**. When the specified query execution speed limits are reached, Knex provider will mark the corresponding query as `normal`, `slow` or `panic`.
+   - **slow** `number`. Default: `201`.
+   - **panic** `number`. Default: `1001`.
 
 ## <a name="logger"></a> Logger
 

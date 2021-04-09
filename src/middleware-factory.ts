@@ -9,8 +9,8 @@ const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = (configuration) => {
 
     const { logDir } = config;
 
-    context.logger.sql = context.logger.sql ?? sqlLogger({ logDir })
-    context.knex = context.knex ?? knexProvider({
+    context.logger.sql = sqlLogger({ logDir })
+    context.knex = knexProvider({
       logger: context.logger.sql,
       config: configuration,
     });

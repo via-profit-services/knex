@@ -6,8 +6,10 @@
 
 /// <reference types="node" />
 declare module '@via-profit-services/core' {
-  import Knex from 'knex';
+  // import { Knex } from 'knex';
+  import { Knex } from 'knex';
 
+ 
   interface Context {
 
     /**
@@ -30,7 +32,7 @@ declare module '@via-profit-services/core' {
 }
 
 declare module '@via-profit-services/knex' {
-  import type Knex from 'knex';
+  import { Knex } from 'knex';
   import {
     OrderBy, DirectionRange, Between,
     Where, WhereValue,
@@ -91,8 +93,18 @@ declare module '@via-profit-services/knex' {
     migrations?: Omit<Knex.MigratorConfig, 'database'>;
     seeds?: Omit<Knex.SeederConfig, 'variables'>;
     pool?: Omit<Knex.PoolConfig, 'name' | 'log' | 'refreshIdle' | 'returnToHead' | 'priorityRange'>;
+
+    /**
+     * When the specified query execution speed limits are reached,\
+     * Knex provider will mark the corresponding query as normal, slow or panic
+     */
+    queryTimeLimit?: QueryTimeConfig;
   }
 
+  export type QueryTimeConfig = {
+    slow?: number;
+    panic?: number;
+  };
 
   export type ApplyAliases = (whereClause: Where, aliases: TableAliases) => Where;
 
@@ -281,6 +293,7 @@ declare module '@via-profit-services/knex' {
    * ```
    */
   export const extractTotalCountPropOfNode: ExtractTotalCountPropOfNode;
+
 
   export const DATABASE_CHARSET: 'UTF8';
   export const DATABASE_CLIENT: 'pg';
