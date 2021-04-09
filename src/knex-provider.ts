@@ -1,7 +1,7 @@
 import { ServerError } from '@via-profit-services/core';
 import type { KnexProvider } from '@via-profit-services/knex';
 
-import type Knex from 'knex';
+import type { Knex } from 'knex';
 import knex from 'knex';
 import moment from 'moment-timezone';
 import { performance } from 'perf_hooks';

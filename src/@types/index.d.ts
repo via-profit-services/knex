@@ -6,8 +6,10 @@
 
 /// <reference types="node" />
 declare module '@via-profit-services/core' {
-  import Knex from 'knex';
+  // import { Knex } from 'knex';
+  import { Knex } from 'knex';
 
+ 
   interface Context {
 
     /**
@@ -30,7 +32,7 @@ declare module '@via-profit-services/core' {
 }
 
 declare module '@via-profit-services/knex' {
-  import type Knex from 'knex';
+  import { Knex } from 'knex';
   import {
     OrderBy, DirectionRange, Between,
     Where, WhereValue,
@@ -142,20 +144,6 @@ declare module '@via-profit-services/knex' {
     nodes: Array<Omit<T, 'totalCount'>>;
     totalCount: number;
   }
-
-  export type ArrayChunk = <T extends Record<string, any>>(
-    array: T[],
-    chunkSize: number
-  ) => T[][];
-
-
-  export type InsertOrUpdate = <T extends Record<string, any>>(params: {
-    knex: Knex;
-    tableName: string;
-    data: T[];
-    constraint?: string;
-    chunkSize?: number;
-  }) => Promise<void>;
 
   /**
    * Convert Order array to Knex Order by format\
@@ -296,33 +284,6 @@ declare module '@via-profit-services/knex' {
    */
   export const extractTotalCountPropOfNode: ExtractTotalCountPropOfNode;
 
-  /**
-   * Generate and execute request of insert or conflict (...) do update\
-   * If `chunkSize` is passed then data array will be chunked\
-   * Example:
-   * ```js
-   * import { insertOrUpdateLargeData } from '@via-profit-services/knex';
-   * import type Knex from 'knex';
-   * 
-   * export async function seed (knex: Knex) {
-   *   await insertOrUpdateLargeData({
-   *     knex,
-   *     tableName: 'myTable',
-   *     constraint: '(id, name)',
-   *     chunkSize: 300,
-   *     data: [
-   *       { id: 'b912e19b-9b9a-4b84-a5d0-1c0897fb76d1', name: 'Ivan', surname: 'Petrov' },
-   *       { id: '60c249a8-ae40-4a7e-940a-743b42ba194e', name: 'Oleg', surname: 'Sidorov' },
-   *     ],
-   *   });
-   * }
-   * 
-
-   * ```
-   */
-  export const insertOrUpdate: InsertOrUpdate;
-
-  export const arrayChunk: ArrayChunk;
 
   export const DATABASE_CHARSET: 'UTF8';
   export const DATABASE_CLIENT: 'pg';
