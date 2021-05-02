@@ -99,6 +99,12 @@ declare module '@via-profit-services/knex' {
      * Knex provider will mark the corresponding query as normal, slow or panic
      */
     queryTimeLimit?: QueryTimeConfig;
+    /**
+     * Database ping timeout in milliseconds\
+     * \
+     * Default: `900000` (15 minutes)
+     */
+    pingTimeout?: number | false;
   }
 
   export type QueryTimeConfig = {
@@ -154,6 +160,21 @@ declare module '@via-profit-services/knex' {
     nodes: Array<Omit<T, 'totalCount'>>;
     totalCount: number;
   }
+
+  export type Times = Record<string, {
+    startTime: number;
+  }>;
+
+  export type KnexQuery = {
+    __knexQueryUid: string;
+    sql: string;
+    bindings: any;
+  }
+
+  export type Cache = {
+    instance: Knex;
+    timerID: NodeJS.Timeout;
+  };
 
   /**
    * Convert Order array to Knex Order by format\
