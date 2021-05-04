@@ -9,13 +9,12 @@ import { types } from 'pg';
 
 import {
   DATABASE_CHARSET, DATABASE_CLIENT, DEFAULT_TIMEZONE, ENABLE_PG_TYPES,
-  QUERY_TIME_LIMIT_PANIC, QUERY_TIME_LIMIT_SLOW, PING_INTERVAL,
+  QUERY_TIME_LIMIT_PANIC, QUERY_TIME_LIMIT_SLOW,
 } from './constants';
 
 
 const cache: Cache = {
   instance: null,
-  timerID: null,
 }
 
 const knexProvider: KnexProvider = (props) => {
@@ -26,7 +25,7 @@ const knexProvider: KnexProvider = (props) => {
 
   const { config, logger } = props;
   const {
-    connection, timezone, localTimezone, pool, enablePgTypes, queryTimeLimit, pingTimeout,
+    connection, timezone, localTimezone, pool, enablePgTypes, queryTimeLimit,
   } = config;
   const times: Times = {};
   const usePgTypes = typeof enablePgTypes === 'undefined' ? ENABLE_PG_TYPES : enablePgTypes;
@@ -90,17 +89,6 @@ const knexProvider: KnexProvider = (props) => {
     times[__knexQueryUid] = {
       startTime: performance.now(),
     };
-
-    if (typeof pingTimeout !== 'boolean') {
-
-      if (cache.timerID) {
-        clearInterval(cache.timerID);
-      }
-
-      cache.timerID = setInterval(() => {
-        checkConnection(cache.instance);
-      }, typeof pingTimeout === 'undefined' ? PING_INTERVAL : pingTimeout);
-    }
   }
 
   const knexOnQueryResponseListener = (
