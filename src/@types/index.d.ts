@@ -92,7 +92,7 @@ declare module '@via-profit-services/knex' {
     enablePgTypes?: boolean;
     migrations?: Omit<Knex.MigratorConfig, 'database'>;
     seeds?: Omit<Knex.SeederConfig, 'variables'>;
-    pool?: Omit<Knex.PoolConfig, 'name' | 'log' | 'refreshIdle' | 'returnToHead' | 'priorityRange'>;
+    pool?: Omit<Knex.PoolConfig, 'name' | 'refreshIdle' | 'returnToHead' | 'priorityRange'>;
 
     /**
      * When the specified query execution speed limits are reached,\
