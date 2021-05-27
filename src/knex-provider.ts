@@ -56,6 +56,13 @@ const knexProvider: KnexProvider = (props) => {
 
   const knexPool: Knex.PoolConfig = {
     ...pool,
+    log: (message, logLevel) => {
+      const log = logLevel === 'warn' || logLevel === 'error'
+        ? logger.error
+        : logger.debug;
+
+      log;(message);
+    },
     afterCreate: pool?.afterCreate ? pool.afterCreate : (conn: any, done: any) => {
       conn.query(
         `
