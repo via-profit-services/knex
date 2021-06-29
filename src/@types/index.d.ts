@@ -145,6 +145,10 @@ declare module '@via-profit-services/knex' {
     builder: Knex.QueryBuilder,
     search: OutputSearch | false | undefined | null,
     aliases?: TableAliases,
+    options?: {
+      strategy?: 'from-start' | 'to-end' | 'blurry' | 'explicit';
+      splitWords?: boolean;
+    },
   ) => Knex.QueryBuilder<any, any>;
 
 

@@ -9,7 +9,7 @@ import webpackBaseConfig from './webpack-config-base';
 
 const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
   optimization: {
-    minimize: false,
+    minimize: true,
     nodeEnv: false,
   },
   entry: {

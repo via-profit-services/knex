@@ -162,10 +162,14 @@ export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, al
   return builder;
 };
 
-export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliases) => {
+export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliases, options) => {
   if (!search || !search.length) {
     return builder;
   }
+
+  const splitWords =
+    typeof options?.splitWords === 'undefined' ? false : Boolean(options?.splitWords);
+  const strategy = typeof options?.strategy === 'undefined' ? 'from-start' : options.strategy;
 
   try {
     const searchFields: Record<string, string[]> = {};
@@ -174,7 +178,7 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliase
     // fill aliasesMap
     Object.entries(aliases || {}).forEach(([tableName, field]) => {
       const fieldsArray = Array.isArray(field) ? field : [field];
-      fieldsArray.forEach((fieldName) => {
+      fieldsArray.forEach(fieldName => {
         aliasesMap.set(fieldName, tableName);
       });
     });
@@ -182,27 +186,42 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliase
     // Group search queries by field name
     search.forEach(({ field, query }) => {
       const data = searchFields[field] || [];
-      const queries = query.trim().split(' ');
+      const queries = splitWords ? query.trim().split(' ') : [query.trim()];
       searchFields[field] = data.concat(queries);
     });
 
     Object.entries(searchFields).forEach(([field, queries]) => {
-      builder.andWhere((andWhereBuilder) => {
-        queries.forEach((query) => {
+      builder.andWhere(andWhereBuilder => {
+        queries.forEach(query => {
           const alias = aliasesMap.get(field) || aliasesMap.get('*');
           const column = alias ? `${alias}.${field}` : field;
-          andWhereBuilder.orWhereRaw('??::text ilike ?', [column, `%${query}%`]);
+
+          switch (strategy) {
+            case 'to-end':
+              andWhereBuilder.orWhereRaw('??::text ilike ?', [column, `%${query}`]);
+              break;
+            case 'explicit':
+              andWhereBuilder.orWhereRaw('??::text ilike ?', [column, query]);
+              break;
+            case 'blurry':
+              andWhereBuilder.orWhereRaw('??::text ilike ?', [column, `%${query}%`]);
+              break;
+            case 'from-start':
+            default:
+              andWhereBuilder.orWhereRaw('??::text ilike ?', [column, `${query}%`]);
+              break;
+          }
         });
 
         return andWhereBuilder;
-      })
-    })
+      });
+    });
 
     return builder;
-
   } catch (err) {
     throw new ServerError(
       'Search field convertation failure. Check the «convertSearchToKnex» passed params',
-      { err });
+      { err },
+    );
   }
-}
+};
