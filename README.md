@@ -273,7 +273,10 @@ const aliases = {
 await knex
   .select(['*'])
   .from('books')
-  .where((builder) => convertSearchToKnex(builder, search, aliases));
+  .where((builder) => convertSearchToKnex(builder, search, aliases, {
+    strategy: 'blurry',
+    splitWords: true,
+  }));
 
 ```
 
