@@ -5,4 +5,3 @@ export const ENABLE_PG_TYPES = true;
 export const LOG_FILENAME_SQL = 'sql-%DATE%.log';
 export const QUERY_TIME_LIMIT_SLOW = 201;
 export const QUERY_TIME_LIMIT_PANIC = 1001;
-export const PING_INTERVAL = 900000;

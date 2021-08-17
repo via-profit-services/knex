@@ -138,7 +138,6 @@ const versionResolver = async (parent, args, context) => {
  - **queryTimeLimit**. When the specified query execution speed limits are reached, Knex provider will mark the corresponding query as `normal`, `slow` or `panic`.
    - **slow** `number`. Default: `201`.
    - **panic** `number`. Default: `1001`.
- - **pingTimeout**. Database ping timeout in milliseconds. Default: `900000` (15 minutes).
 
 ## <a name="logger"></a> Logger
 
@@ -274,7 +273,10 @@ const aliases = {
 await knex
   .select(['*'])
   .from('books')
-  .where((builder) => convertSearchToKnex(builder, search, aliases));
+  .where((builder) => convertSearchToKnex(builder, search, aliases, {
+    strategy: 'blurry',
+    splitWords: true,
+  }));
 
 ```
 
