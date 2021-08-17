@@ -45,17 +45,17 @@ declare module '@via-profit-services/knex' {
    * Key - is a alias name \
    * Value - is a field alias name or array of names \
    * Use asterisk (\*) for default alias name. \
+   * Use `none` as alias name to skip alias for specific column. \
    * For example:
    * ```js
    * {
    *   books: ['title', 'length'],
+   *   none: ['titleGenerated'],
    *   info: ['*'],
    * }
    * ```
    */
-  export type TableAliases = {
-    [key: string]: string | string[];
-  };
+  export type TableAliases = Record<string | 'none', string | string[]>;
 
   export type KnexGraphqlMiddlewareFactory = (config: Configuration) => Middleware;
 

@@ -21,7 +21,7 @@ export const applyAliases: ApplyAliases = (whereClause, aliases) => {
     const alias = aliasesMap.get(field) || aliasesMap.get('*');
 
     const whereField: WhereField = [
-      alias ? `${alias}.${field}` : field,
+      alias && alias !== 'none' ? `${alias}.${field}` : field,
       action,
       value,
     ];
@@ -51,7 +51,7 @@ export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy, aliases) => 
     const alias = aliasesMap.get(field) || aliasesMap.get('*');
 
     return {
-      column: alias ? `${alias}.${field}` : field,
+      column: alias && alias !== 'none' ? `${alias}.${field}` : field,
       order: direction,
     }
   })
@@ -95,7 +95,7 @@ export const convertBetweenToKnex: ConvertBetweenToKnex = ( builder, between, op
   Object.entries(between).forEach(([field, betweenData]) => {
     const alias = aliasesMap.get(field) || aliasesMap.get('*');
     builder.whereBetween(
-      alias ? `${alias}.${field}` : field,
+      alias && alias !== 'none' ? `${alias}.${field}` : field,
       [
         betweenData.start instanceof Date
           ? moment.tz(betweenData.start, timezone).format()
@@ -194,7 +194,7 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliase
       builder.andWhere(andWhereBuilder => {
         queries.forEach(query => {
           const alias = aliasesMap.get(field) || aliasesMap.get('*');
-          const column = alias ? `${alias}.${field}` : field;
+          const column = alias && alias !== 'none' ? `${alias}.${field}` : field;
 
           switch (strategy) {
             case 'to-end':
