@@ -956,7 +956,7 @@ __metadata:
     winston-daily-rotate-file: ^4.5.0
   peerDependencies:
     "@via-profit-services/core": 1.x.x
-    knex: ^0.21.12
+    knex: ^0.95.4
     pg: ^8.5.1
   languageName: unknown
   linkType: soft

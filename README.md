@@ -295,7 +295,7 @@ const aliases = {
   books: ['year', 'pages'],
   author: ['author'],
 }
-const where = applyAliases();
+const where = applyAliases(where, aliases);
 ```
 
 You can use asterisk (`*`) for default alias name:
@@ -311,7 +311,24 @@ const aliases = {
   books: [*],
   author: ['author'],
 }
-const where = applyAliases();
+const where = applyAliases(where, aliases);
+```
+
+
+Use `none` as alias name to skip alias for specific column:
+ex. u might be use it if u want to perform search/filtering to generated columns
+```ts
+const where = [
+  ['year', '=', 1992],
+  ['pages', '>', 30],
+  ['nameGenerated', 'is not null'],
+];
+
+const aliases = {
+  none: ['nameGenerated'],
+  books: [*],
+}
+const where = applyAliases(where, aliases);
 ```
 
 ### extractTotalCountPropOfNode
