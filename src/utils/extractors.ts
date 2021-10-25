@@ -10,4 +10,3 @@ export const extractTotalCountPropOfNode: ExtractTotalCountPropOfNode = nodes =>
     return newNode;
   }),
 });
-

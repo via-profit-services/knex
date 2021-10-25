@@ -9,9 +9,7 @@ declare module '@via-profit-services/core' {
   // import { Knex } from 'knex';
   import { Knex } from 'knex';
 
- 
   interface Context {
-
     /**
      * Instance of knex.js
      * @see: https://github.com/knex/knex
@@ -19,26 +17,28 @@ declare module '@via-profit-services/core' {
     knex: Knex;
   }
 
-  interface LoggersCollection {
-    /**
-     * Database logger \
-     * \
-     * Transports:
-     *  - `debug` - File transport
-     *  - `error` - Console transport
-     */
-    sql: Logger;
+  interface CoreEmitter {
+    on(event: 'knex-warning', callback: (message: string) => void): this;
+    on(event: 'knex-error', callback: (message: string, errorData?: any) => void): this;
+    on(event: 'knex-debug', callback: (message: string) => void): this;
+    once(event: 'knex-warning', callback: (message: string) => void): this;
+    once(event: 'knex-error', callback: (message: string, errorData?: any) => void): this;
+    once(event: 'knex-debug', callback: (message: string) => void): this;
   }
 }
 
 declare module '@via-profit-services/knex' {
   import { Knex } from 'knex';
   import {
-    OrderBy, DirectionRange, Between,
-    Where, WhereValue,
-    Logger, Middleware, OutputSearch,
+    OrderBy,
+    DirectionRange,
+    Between,
+    Where,
+    WhereValue,
+    Middleware,
+    OutputSearch,
+    CoreEmitter,
   } from '@via-profit-services/core';
-
 
   /**
    * Table aliases map
@@ -59,37 +59,9 @@ declare module '@via-profit-services/knex' {
 
   export type KnexGraphqlMiddlewareFactory = (config: Configuration) => Middleware;
 
-
   export interface Configuration {
-
-    /**
-     * PostgreSQL connection config
-     */
-    connection: Knex.PgConnectionConfig;
-
-    /**
-     * Database server timezone\
-     * \
-     * Default: `UTC`
-     */
-    timezone?: string;
-
-    /**
-     * **Local** server timezone\
-     * Used for convert `timestamp` and `timestamptz` entities to local `Date`\
-     * If `enablePgTypes` is false then this property not used\
-     * \
-     * Default: `UTC`
-     */
-    localTimezone?: string;
-
-    /**
-     * Used for convert `timestamp` and `timestamptz` entities to local `Date`\
-     * This option use `localTimezone` property\
-     * \
-     * Default: `true`
-     */
-    enablePgTypes?: boolean;
+    client: 'pg' | 'mysql' | 'sqlite3' | 'mysql2' | 'oracledb' | 'tedious';
+    connection: Knex.StaticConnectionConfig;
     migrations?: Omit<Knex.MigratorConfig, 'database'>;
     seeds?: Omit<Knex.SeederConfig, 'variables'>;
     pool?: Omit<Knex.PoolConfig, 'name' | 'log' | 'refreshIdle' | 'returnToHead' | 'priorityRange'>;
@@ -110,7 +82,7 @@ declare module '@via-profit-services/knex' {
 
   export interface KnexProviderProps {
     config: Configuration;
-    logger: Logger;
+    emitter: CoreEmitter;
   }
 
   export type KnexMiddleware = (config: Configuration) => Middleware;
@@ -121,23 +93,24 @@ declare module '@via-profit-services/knex' {
     order: DirectionRange;
   }[];
 
-
   export type ConvertOrderByToKnex = (
     orderBy: OrderBy | undefined,
     aliases?: TableAliases,
   ) => OrderByKnex;
-  export type ConvertJsonToKnex = <TRecord = unknown>(knex: Knex, data: unknown | string) => Knex.Raw<TRecord>;
+  export type ConvertJsonToKnex = <TRecord = unknown>(
+    knex: Knex,
+    data: unknown | string,
+  ) => Knex.Raw<TRecord>;
   export type ConvertBetweenToKnex = (
     builder: Knex.QueryBuilder,
     between: Between | undefined,
     options?: {
       aliases?: TableAliases;
-      timezone: string;
-    }
+    },
   ) => Knex.QueryBuilder<any, any>;
   export type ConvertWhereToKnex = (
     builder: Knex.QueryBuilder,
-    whereClause: {[key: string]: WhereValue} | Where,
+    whereClause: { [key: string]: WhereValue } | Where,
     aliases?: TableAliases,
   ) => Knex.QueryBuilder<any, any>;
 
@@ -151,23 +124,25 @@ declare module '@via-profit-services/knex' {
     },
   ) => Knex.QueryBuilder<any, any>;
 
-
-  export type ExtractTotalCountPropOfNode = <T extends {totalCount: number }>(
+  export type ExtractTotalCountPropOfNode = <T extends { totalCount: number }>(
     nodes: T[],
   ) => {
     nodes: Array<Omit<T, 'totalCount'>>;
     totalCount: number;
-  }
+  };
 
-  export type Times = Record<string, {
-    startTime: number;
-  }>;
+  export type Times = Record<
+    string,
+    {
+      startTime: number;
+    }
+  >;
 
   export type KnexQuery = {
     __knexQueryUid: string;
     sql: string;
     bindings: any;
-  }
+  };
 
   export type Cache = {
     instance: Knex;
@@ -181,12 +156,12 @@ declare module '@via-profit-services/knex' {
    *   field: 'name',
    *   direction: 'asc',
    * }];
-   * 
+   *
    * await knex
    *   .select(['*'])
    *   .from('books')
    *   .orderBy(convertOrderByToKnex(orderBy)); // <-- [{ column: 'name', order: 'asc' }]
-   * 
+   *
    * ```
    */
   export const convertOrderByToKnex: ConvertOrderByToKnex;
@@ -206,15 +181,14 @@ declare module '@via-profit-services/knex' {
    *     end: 800,
    *   }
    * };
-   * 
+   *
    * await knex
    *   .select(['*'])
    *   .from('books')
    *   .where((builder) => convertBetweenToKnex(builder, between));
-   * 
+   *
    * ```
    * In third argument you can passed options:
-   *  - **timezone** `string`. used with operations between dates
    *  - **aliases** `TableAliases`. See `ApplyAliases`.
    */
   export const convertBetweenToKnex: ConvertBetweenToKnex;
@@ -227,12 +201,12 @@ declare module '@via-profit-services/knex' {
    *   ['year', '=', 1992],
    *   ['pages', '>', 30],
    * ];
-   * 
+   *
    * await knex
    *   .select(['*'])
    *   .from('books')
    *   .where((builder) => convertWhereToKnex(builder, where));
-   * 
+   *
    * ```
    */
   export const convertWhereToKnex: ConvertWhereToKnex;
@@ -245,42 +219,42 @@ declare module '@via-profit-services/knex' {
    *   field: 'title',
    *   query: 'kitchen',
    * }];
-   * 
+   *
    * await knex
    *   .select(['*'])
    *   .from('books')
    *   .where((builder) => convertSearchToKnex(builder, search));
-   * 
+   *
    * ```
    */
   export const convertSearchToKnex: ConvertSearchToKnex;
-  
+
   /**
    * Apply aliases map to where clause array
-   * 
+   *
    * ```ts
    * const where = [
    *   ['year', '=', 1992],
    *   ['pages', '>', 30],
    *   ['author', 'is not null'],
    * ];
-   * 
+   *
    * const aliases = {
    *   books: ['year', 'pages'],
    *   author: ['author'],
    * }
    * const where = applyAliases();
    * ```
-   * 
+   *
    * You can use asterisk (`*`) for default alias name:
-   * 
+   *
    * ```ts
    * const where = [
    *   ['year', '=', 1992],
    *   ['pages', '>', 30],
    *   ['author', 'is not null'],
    * ];
-   * 
+   *
    * const aliases = {
    *   books: [*],
    *   author: ['author'],
@@ -312,11 +286,8 @@ declare module '@via-profit-services/knex' {
    */
   export const extractTotalCountPropOfNode: ExtractTotalCountPropOfNode;
 
-
   export const DATABASE_CHARSET: 'UTF8';
-  export const DATABASE_CLIENT: 'pg';
   export const DEFAULT_TIMEZONE: 'UTC';
 
   export const factory: KnexGraphqlMiddlewareFactory;
-
 }
