@@ -1,5 +1,4 @@
 const externals = [
-
   // KNEX ignore not postgress drivers
   /sqlite3/,
   /mysql2/,
