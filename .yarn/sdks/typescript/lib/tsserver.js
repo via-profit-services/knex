@@ -4,7 +4,7 @@ const {existsSync} = require(`fs`);
 const {createRequire, createRequireFromPath} = require(`module`);
 const {resolve} = require(`path`);
 
-const relPnpApiPath = "../../../../.pnp.js";
+const relPnpApiPath = "../../../../.pnp.cjs";
 
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
@@ -153,7 +153,7 @@ const moduleWrapper = tsserver => {
         typeof parsedMessage.arguments.hostInfo === `string`
       ) {
         hostInfo = parsedMessage.arguments.hostInfo;
-        if (hostInfo === `vscode` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\/1\.[1-5][0-9]\./)) {
+        if (hostInfo === `vscode` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\/1\.([1-5][0-9]|60)\./)) {
           hostInfo += ` <1.61`;
         }
       }
