@@ -1,9 +1,12 @@
-import { Where, ServerError, WhereField } from '@via-profit-services/core';
+import { Where, WhereField } from '@via-profit-services/core';
 import {
-  ConvertOrderByToKnex, ConvertJsonToKnex, ConvertBetweenToKnex,
-  ConvertWhereToKnex, ConvertSearchToKnex, ApplyAliases,
+  ConvertOrderByToKnex,
+  ConvertJsonToKnex,
+  ConvertBetweenToKnex,
+  ConvertWhereToKnex,
+  ConvertSearchToKnex,
+  ApplyAliases,
 } from '@via-profit-services/knex';
-import moment from 'moment-timezone';
 
 import { DEFAULT_TIMEZONE } from '../constants';
 
@@ -11,12 +14,12 @@ export const applyAliases: ApplyAliases = (whereClause, aliases) => {
   const aliasesMap = new Map<string, string>();
   Object.entries(aliases).forEach(([tableName, field]) => {
     const fieldsArray = Array.isArray(field) ? field : [field];
-    fieldsArray.forEach((fieldName) => {
+    fieldsArray.forEach(fieldName => {
       aliasesMap.set(fieldName, tableName);
     });
   });
 
-  const newWhere = whereClause.map((data) => {
+  const newWhere = whereClause.map(data => {
     const [field, action, value] = data;
     const alias = aliasesMap.get(field) || aliasesMap.get('*');
 
@@ -32,7 +35,6 @@ export const applyAliases: ApplyAliases = (whereClause, aliases) => {
   return newWhere;
 };
 
-
 /**
  * Convert GraphQL OrderBy array to Knex OrderBy array format
  */
@@ -42,7 +44,7 @@ export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy, aliases) => 
   const aliasesMap = new Map<string, string>();
   Object.entries(aliases || {}).forEach(([tableName, field]) => {
     const fieldsArray = Array.isArray(field) ? field : [field];
-    fieldsArray.forEach((fieldName) => {
+    fieldsArray.forEach(fieldName => {
       aliasesMap.set(fieldName, tableName);
     });
   });
@@ -53,29 +55,22 @@ export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy, aliases) => 
     return {
       column: alias && alias !== 'none' ? `${alias}.${field}` : field,
       order: direction,
-    }
-  })
+    };
+  });
 };
-
 
 export const convertJsonToKnex: ConvertJsonToKnex = (knex, data) => {
   try {
-    const str = typeof data === 'string'
-      ? data
-      : JSON.stringify(data);
+    const str = typeof data === 'string' ? data : JSON.stringify(data);
 
     return knex.raw('?::jsonb', [str]);
   } catch (err) {
-    throw new ServerError(
-      'Json field convertation failure. Check the «convertJsonToKnex» passed params',
-      { err },
-    )
+    throw new Error('Json field convertation failure. Check the «convertJsonToKnex» passed params');
   }
 };
 
-
-export const convertBetweenToKnex: ConvertBetweenToKnex = ( builder, between, options) => {
-  const { aliases, timezone } = options || {
+export const convertBetweenToKnex: ConvertBetweenToKnex = (builder, between, options) => {
+  const { aliases } = options || {
     aliases: {},
     timezone: DEFAULT_TIMEZONE,
   };
@@ -87,31 +82,25 @@ export const convertBetweenToKnex: ConvertBetweenToKnex = ( builder, between, op
   const aliasesMap = new Map<string, string>();
   Object.entries(aliases || {}).forEach(([tableName, field]) => {
     const fieldsArray = Array.isArray(field) ? field : [field];
-    fieldsArray.forEach((fieldName) => {
+    fieldsArray.forEach(fieldName => {
       aliasesMap.set(fieldName, tableName);
     });
   });
 
   Object.entries(between).forEach(([field, betweenData]) => {
     const alias = aliasesMap.get(field) || aliasesMap.get('*');
-    builder.whereBetween(
-      alias && alias !== 'none' ? `${alias}.${field}` : field,
-      [
-        betweenData.start instanceof Date
-          ? moment.tz(betweenData.start, timezone).format()
-          : betweenData.start,
-        betweenData.end instanceof Date
-          ? moment.tz(betweenData.end, timezone).format()
-          : betweenData.end,
-      ],
-    );
+    builder.whereBetween(alias && alias !== 'none' ? `${alias}.${field}` : field, [
+      betweenData.start instanceof Date
+        ? new Date(betweenData.start).toUTCString()
+        : betweenData.start,
+      betweenData.end instanceof Date ? new Date(betweenData.end).toUTCString() : betweenData.end,
+    ]);
   });
 
   return builder;
 };
 
-
-export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, aliases ) => {
+export const convertWhereToKnex: ConvertWhereToKnex = (builder, whereClause, aliases) => {
   if (typeof whereClause === 'undefined') {
     return builder;
   }
@@ -130,34 +119,37 @@ export const convertWhereToKnex: ConvertWhereToKnex = ( builder, whereClause, al
     });
   }
 
-  [...(aliases
-    ? applyAliases(whereArray, aliases)
-    : whereArray),
-  ].forEach(([field, action, value]) => {
-    switch (true) {
-      case action === 'in':
+  [...(aliases ? applyAliases(whereArray, aliases) : whereArray)].forEach(
+    ([field, action, value]) => {
+      switch (true) {
+        case action === 'in':
+          builder.whereIn(
+            field,
+            Array.isArray(value) ? value : ([value] as Array<string | number>),
+          );
+          break;
 
-        builder.whereIn(field, Array.isArray(value) ? value : [value] as Array<string | number>);
-        break;
+        case action === 'notIn':
+          builder.whereNotIn(
+            field,
+            Array.isArray(value) ? value : ([value] as Array<string | number>),
+          );
+          break;
 
-      case action === 'notIn':
-        builder.whereNotIn(field, Array.isArray(value) ? value : [value] as Array<string | number>);
-        break;
+        case action === 'is null':
+          builder.whereNull(field);
+          break;
 
-      case action === 'is null':
-        builder.whereNull(field);
-        break;
+        case action === 'is not null':
+          builder.whereNotNull(field);
+          break;
 
-      case action === 'is not null':
-        builder.whereNotNull(field);
-        break;
-
-      default:
-        builder.where(field, action, value as string | number | boolean | null);
-        break;
-    }
-  });
-
+        default:
+          builder.where(field, action, value as string | number | boolean | null);
+          break;
+      }
+    },
+  );
 
   return builder;
 };
@@ -219,9 +211,8 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliase
 
     return builder;
   } catch (err) {
-    throw new ServerError(
+    throw new Error(
       'Search field convertation failure. Check the «convertSearchToKnex» passed params',
-      { err },
     );
   }
 };

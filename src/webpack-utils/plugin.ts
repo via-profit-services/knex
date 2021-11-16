@@ -13,9 +13,8 @@ type IgnoreModules = {
 }[];
 
 class ViaProfitKnexWebpackPlugin implements WebpackPluginInstance {
-
   // ignore webpack plugin template
-  ignoreModules: IgnoreModules = externals.map((resourceRegExp) => ({
+  ignoreModules: IgnoreModules = externals.map(resourceRegExp => ({
     resourceRegExp,
   }));
 
@@ -39,12 +38,11 @@ class ViaProfitKnexWebpackPlugin implements WebpackPluginInstance {
   }
 
   apply(compiler: Compiler) {
-
-    compiler.hooks.normalModuleFactory.tap('ViaProfitPlugin', (nmf) => {
+    compiler.hooks.normalModuleFactory.tap('ViaProfitPlugin', nmf => {
       nmf.hooks.beforeResolve.tap('ViaProfitPlugin', this.checkIgnore);
     });
 
-    compiler.hooks.contextModuleFactory.tap('ViaProfitPlugin', (cmf) => {
+    compiler.hooks.contextModuleFactory.tap('ViaProfitPlugin', cmf => {
       cmf.hooks.beforeResolve.tap('ViaProfitPlugin', this.checkIgnore);
     });
   }

@@ -2,7 +2,7 @@
 
 ![via-profit-services-cover](./assets/via-profit-services-cover.png)
 
-> Via Profit services / **Knex** - Database provider. At this time sipports PostgreSQL only.
+> Via Profit services / **Knex** - Database provider.
 
 ![npm (scoped)](https://img.shields.io/npm/v/@via-profit-services/knex?color=blue)
 ![NPM](https://img.shields.io/npm/l/@via-profit-services/knex?color=blue)
@@ -15,13 +15,12 @@
  - [Installation](#installation)
  - [Getting Started](#getting-started)
  - [Options](#options)
- - [Logger](#logger)
  - [API](#api)
 
 
 ## <a name="overview"></a> Overview
 
-This module is a provider that extends the GraphQL [Сontext](https://github.com/via-profit-services/core/blob/master/README.md#context) by adding `Knex` instance with an already initialized connection to your database. A logger named `sql` will also be added to the context (see: [Logger](#logger)).
+This module is a provider that extends the GraphQL [Сontext](https://github.com/via-profit-services/core/blob/master/README.md#context) by adding `Knex` instance with an already initialized connection to your database.
 
 In addition, the module exports several auxiliary functions _(See [API](#api) section for details)_.
 
@@ -30,14 +29,13 @@ In addition, the module exports several auxiliary functions _(See [API](#api) se
 
  - [Core](https://github.com/via-profit-services/core) - Main GraphQL Server
  - [Knex](https://github.com/knex/knex) - A SQL query builder
- - [Node Postgress](https://github.com/brianc/node-postgres) - PostgreSQL client
 
 ## <a name="installation"></a> Installation
 
 You need to install the peer dependencies to:
 
 ```bash
-$ yarn add knex pg @via-profit-services/core @via-profit-services/knex
+$ yarn add knex @via-profit-services/core @via-profit-services/knex
 ```
 
 ## <a name="getting-started"></a> Getting Started
@@ -53,6 +51,7 @@ import * as knex from '@via-profit-services/knex';
 
  // initialize knex factory to get knex middleware for Core
   const knexMiddleware = knex.factory({
+    client: 'pg',
     connection: {
       user: 'dbuser',
       database: 'dbname',
@@ -88,7 +87,8 @@ const versionResolver = async (parent, args, context) => {
 
 ## <a name="options"></a> Options
 
- - **connection** *(required)*. PostgreSQL connection params.
+ - **client** *(required)* `string`. One of the variants: `pg`; `mysql`; `sqlite3`; `mysql2`; `oracledb`; `tedious`.
+ - **connection** *(required)*. Knex connection params.
    - **user**. `string`. Database username. Default: `process.env.USER` (_process.env.USERNAME if is win32 platform_).
    - **database**. `string`. Database name.
    - **password**. `string | (() => string | Promise<string>)` . Database password. Default: `null`.
@@ -101,9 +101,6 @@ const versionResolver = async (parent, args, context) => {
    - **connectionTimeoutMillis**. `number`. Default: `0`.
    - **keepAliveInitialDelayMillis**. `number`. Default: `0`.
    - **ssl**. `boolean | ConnectionOptions`. Default: `false`.
- - **timezone**. `String`. Database server timezone. Default: `UTC`.
- - **localTimezone**. `String`. Local server timezone. Used for convert `timestamp` and `timestamptz` entities to local `Date`. Default: `UTC`.
- - **enablePgTypes**. `String`. Used for convert `timestamp` and `timestamptz` entities to local `Date`. This option use `localTimezone` property. Default: `true`.
  - **migrations**. Knex migrations config.
    - **directory** `string | string[]`. A relative path to the directory containing the migration files. Can be an array of paths. Default: `./migrations`.
    - **tableName** `string`. The table name used for storing the migration state. Default: `knex_migrations`.
@@ -125,38 +122,20 @@ const versionResolver = async (parent, args, context) => {
    - **timestampFilenamePrefix** `boolean`. If true, all seeds files will be prefixed with a timestamp `yyyymmddhhmmss_` (e.g. `20191231235959_myseed.js`). Default: `false`.
    - **stub** `string`. Seeds stub filename. Default: `undefined`.
  - **pool**. Knex Pooling.
-   - **afterCreate** `(rawDriverConnection, done) => void`. Is called when the pool aquires a new connection from the database server. `done(err, connection)` callback must be called for `knex` to be able to decide if the connection is ok or if it should be discarded right away from the pool. By default, a function will be called that will set parameters such as: `SET TIMEZONE = ${timezone}` () and `SET CLIENT_ENCODING = UTF8`.
-   - **min** `number`. Minimum size. Default: `2`.
+   - **afterCreate** `(rawDriverConnection, done) => void`. Is called when the pool aquires a new connection from the database server. `done(err, connection)` callback must be called for `knex` to be able to decide if the connection is ok or if it should be discarded right away from the pool. By default, a function will be called that will set parameters such as: `SET TIMEZONE = UTC` () and `SET CLIENT_ENCODING = UTF8`.
+   - **min** `number`. Minimum size. Default: `0`.
    - **max** `number`. Maximum size. Default: `10`.
-   - **idleTimeoutMillis** `number`. Free resouces are destroyed after this many milliseconds. Default: `30000`.
+   - **idleTimeoutMillis** `number`. Free resouces are destroyed after this many milliseconds. Default: `10000`.
    - **reapIntervalMillis** `number`. How often to check for idle resources to destroy. Default: `1000`.
    - **propagateCreateError** `boolean`. If true, when a create fails, the first pending acquire is rejected with the error. If this is false then create is retried until `acquireTimeoutMillis` milliseconds has passed. Default: `true`.
    - **createRetryIntervalMillis** `number`. How long to idle after failed create before trying again. Default: `200`.
    - **createTimeoutMillis** `number`. Create operations are cancelled after this many milliseconds if a resource cannot be acquired. Default: `30000`.
    - **destroyTimeoutMillis** `number`. Destroy operations are awaited for at most this many milliseconds new resources will be created after this timeout. Default: `5000`.
-   - **acquireTimeoutMillis** `number`. Acquire promises are rejected after this many milliseconds if a resource cannot be acquired. Default: `30000`.
+   - **acquireTimeoutMillis** `number`. Acquire promises are rejected after this many milliseconds if a resource cannot be acquired. Default: `10000`.
  - **queryTimeLimit**. When the specified query execution speed limits are reached, Knex provider will mark the corresponding query as `normal`, `slow` or `panic`.
    - **slow** `number`. Default: `201`.
    - **panic** `number`. Default: `1001`.
 
-## <a name="logger"></a> Logger
-
-[Logger](https://github.com/via-profit-services/core/blob/master/README.md#logger) named `sql` will also be added to the context.
-
-Logger has been transports:
-
-  - `debug` - File transport
-  - `error` - Console transport
-
-```ts
-const resolver = async (parent, args, context) => {
-  const { logger } = context;
-  
-  logger.sql.debug('Some message');
-
-  return {};
-}
-```
 
 ## <a name="api"></a> API
 
@@ -234,7 +213,6 @@ await knex
 
 In third argument you can passed options:
 
- - **timezone** `string`. used with operations between dates
  - **aliases** `TableAliases`. See `applyAliases` API.
 
 

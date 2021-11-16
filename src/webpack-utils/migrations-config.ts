@@ -5,9 +5,7 @@ import { Configuration, Entry } from 'webpack';
 import { MigrationConfigFactory, MigrationsConfigProps } from '../@types/webpack-utils';
 import knexExternals from './knex-externals';
 
-
-const migrationsConfig: MigrationConfigFactory = (props) => {
-
+const migrationsConfig: MigrationConfigFactory = props => {
   const defaultProps: Required<MigrationsConfigProps> = {
     prefix: '.knex',
     knexfile: path.resolve(process.cwd(), './src/utils/knexfile.ts'),
@@ -17,15 +15,15 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
 
   const config = {
     ...defaultProps,
-    ...props || {},
-  }
+    ...(props || {}),
+  };
 
   const { migrationsSourceDir, seedsSourceDir, knexfile, prefix } = config;
   const entry: Entry = {};
 
   // read mifgration directory and get all migration files path
   if (fs.existsSync(migrationsSourceDir)) {
-    fs.readdirSync(migrationsSourceDir).forEach((filename) => {
+    fs.readdirSync(migrationsSourceDir).forEach(filename => {
       const basename = path.basename(filename.replace(/\.ts$/, ''));
       entry[`migrations/${basename}`] = path.resolve(migrationsSourceDir, filename);
     });
@@ -33,12 +31,11 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
 
   // read mifgration directory and get all migration files path
   if (fs.existsSync(seedsSourceDir)) {
-    fs.readdirSync(seedsSourceDir).forEach((filename) => {
+    fs.readdirSync(seedsSourceDir).forEach(filename => {
       const basename = path.basename(filename.replace(/\.ts$/, ''));
       entry[`seeds/${basename}`] = path.resolve(seedsSourceDir, filename);
     });
   }
-
 
   // set knexfile entry
   if (fs.existsSync(knexfile)) {
@@ -59,14 +56,10 @@ const migrationsConfig: MigrationConfigFactory = (props) => {
       filename: '[name].js',
       libraryTarget: 'commonjs2',
     },
-    externals: [
-      ...knexExternals,
-      /@via-profit-services\/knex/,
-    ],
+    externals: [...knexExternals, /@via-profit-services\/knex/],
   };
 
   return webpackConfig;
-}
-
+};
 
 export default migrationsConfig;
