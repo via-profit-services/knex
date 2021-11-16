@@ -9,8 +9,6 @@ This module is a provider that extends the GraphQL [Сontext](https://github.com
 
 ## Documentation [here](https://node.e1g.ru/packages/knex)
 
-The  [MIT](./LICENSE) License.
-
 
 ## License
 The  [MIT](./LICENSE) License.
