@@ -50,7 +50,7 @@ const schema = new GraphQLSchema({
         type: User,
         args: {
           id: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLID),
           },
         },
         resolve: async (_parent: any, args: { id: string }, context: Context) => {
