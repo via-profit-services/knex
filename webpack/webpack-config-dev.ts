@@ -1,13 +1,13 @@
+import NodemonPlugin from 'nodemon-webpack-plugin';
 import path from 'path';
-import { Configuration } from 'webpack';
+import { Configuration, WebpackPluginInstance } from 'webpack';
 import { merge } from 'webpack-merge';
 
-import webpackBaseConfig from './webpack-config-base';
+import baseConfig from './webpack-config-base';
 
-const webpackDevConfig: Configuration = merge(webpackBaseConfig, {
-entry: {
-    index: path.resolve(__dirname, '../src/index.ts'),
-    playground: path.resolve(__dirname, '../src/playground/index.ts'),
+const webpackDevConfig: Configuration = merge(baseConfig, {
+  entry: {
+    index: path.resolve(__dirname, '../src/playground/index.ts'),
   },
   output: {
     path: path.join(__dirname, '../build/'),
@@ -15,15 +15,14 @@ entry: {
     libraryTarget: 'commonjs2',
   },
   mode: 'development',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   plugins: [
-    // new NodemonPlugin({
-    //   verbose: true,
-    //   script: path.resolve(__dirname, '../build/playground.js'),
-    //   watch: [
-    //     path.resolve(__dirname, '../build'),
-    //   ],
-    // }) as WebpackPluginInstance,
+    new NodemonPlugin({
+      exec: process.env.DEBUG
+        ? 'yarn node --inspect-brk=9229 ./build/index.js'
+        : 'yarn node ./build/index.js',
+      watch: ['./build'],
+    }) as WebpackPluginInstance,
   ],
 });
 

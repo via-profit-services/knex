@@ -24,18 +24,17 @@ const webpackBaseConfig: Configuration = {
   resolve: {
     extensions: ['.ts', '.js', '.json'],
   },
-    externals: [
-    /^@via-profit-services\/core$/,
-    /^moment-timezone$/,
-    /^moment$/,
+  externals: [
+    /^@via-profit-services\//,
     /^knex$/,
     /^winston$/,
     /^winston-daily-rotate-file$/,
 
+    /^graphql$/,
     /^pg$/,
-    /^pg-hstore$/,
-    /^pg-listen$/,
-
+    /^pg-/,
+    /^mysql$/,
+    /^sqlite$/,
     ...knexExternals,
   ],
 };
