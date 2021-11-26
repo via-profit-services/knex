@@ -9,15 +9,8 @@ import type {
 import type { Knex } from 'knex';
 import knex from 'knex';
 import { performance } from 'perf_hooks';
-// import { types } from 'pg';
 
-import {
-  DATABASE_CHARSET,
-  DEFAULT_TIMEZONE,
-  QUERY_TIME_LIMIT_PANIC,
-  QUERY_TIME_LIMIT_SLOW,
-  DEFAULT_POOL_SETTINGS,
-} from './constants';
+import { QUERY_TIME_LIMIT_PANIC, QUERY_TIME_LIMIT_SLOW, DEFAULT_POOL_SETTINGS } from './constants';
 
 const cache: Cache = {
   instance: null,
@@ -31,22 +24,6 @@ const knexProvider: KnexProvider = props => {
   const { config, emitter } = props;
   const { connection, client, pool, queryTimeLimit } = config;
   const times: Times = {};
-
-  // types.setTypeParser(
-  //   types.builtins.TIMESTAMP,
-  //   'text',
-  //   value => new Date(value).toUTCString(),
-  // );
-
-  // timestamptz
-  // types.setTypeParser(
-  //   types.builtins.TIMESTAMPTZ,
-  //   'text',
-  //   value => new Date(value).toUTCString(),
-  // );
-
-  // Numeric to float
-  // types.setTypeParser(types.builtins.NUMERIC, parseFloat);
 
   const knexPool: Knex.PoolConfig = {
     ...DEFAULT_POOL_SETTINGS,
@@ -64,28 +41,6 @@ const knexProvider: KnexProvider = props => {
         emitter.emit('knex-debug', message);
       }
     },
-    afterCreate: pool?.afterCreate
-      ? pool.afterCreate
-      : (conn: any, done: any) => {
-          conn.query(
-            `
-          set timezone = '${DEFAULT_TIMEZONE}';
-          set client_encoding = ${DATABASE_CHARSET};
-        `,
-            (err: any) => {
-              if (err) {
-                emitter.emit('knex-error', 'Connection error.', { err });
-              } else {
-                emitter.emit(
-                  'knex-debug',
-                  `Database connection is OK. timezone=${DEFAULT_TIMEZONE}. client_encoding=${DATABASE_CHARSET}`,
-                );
-              }
-
-              done(err, conn);
-            },
-          );
-        },
   };
 
   const queryTimeConfig: QueryTimeConfig = {
