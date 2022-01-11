@@ -871,16 +871,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@via-profit-services/core@npm:^1.0.9":
-  version: 1.0.9
-  resolution: "@via-profit-services/core@npm:1.0.9"
+"@via-profit-services/core@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@via-profit-services/core@npm:1.3.0"
   dependencies:
     bufferutil: ^4.0.2
     content-type: ^1.0.4
     raw-body: ^2.4.1
     utf-8-validate: ^5.0.3
   peerDependencies:
-    dataloader: ^2.0.0
+    "@via-profit-services/dataloader": ^2.0.1
     express: ^4.17.1
     graphql: ^15.4.0
     moment: ^2.29.1
@@ -892,7 +892,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 8b5d7f0d90ba23b136f1b3007e0184a7c9ed371151336546a25188bcb1ec4da99f0b21af474f8551138c48af080c247030c4c5d680dd60d1b5f08d1e4e262a93
+  checksum: f9caad248f94f925f5de2247fa2401592debadaf754295494c6bf40bcae930629bdaef69eba37262b56fa17d64bb9fa552ccb01989b5a7ebfbc7a4d2693b60aa
   languageName: node
   linkType: hard
 
@@ -920,7 +920,7 @@ __metadata:
     "@types/winston": ^2.4.4
     "@typescript-eslint/eslint-plugin": ^4.21.0
     "@typescript-eslint/parser": ^4.21.0
-    "@via-profit-services/core": ^1.0.9
+    "@via-profit-services/core": ^1.3.0
     "@via-profit-services/eslint-config": ^0.1.11
     cross-env: ^6.0.3
     eslint: ^7.12.1
