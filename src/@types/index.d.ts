@@ -146,7 +146,7 @@ declare module '@via-profit-services/knex' {
     search: OutputSearch | false | undefined | null,
     aliases?: TableAliases,
     options?: {
-      strategy?: 'from-start' | 'to-end' | 'blurry' | 'explicit';
+      strategy?: 'from-start' | 'from-start-strict' | 'to-end' | 'blurry' | 'explicit';
       splitWords?: boolean;
     },
   ) => Knex.QueryBuilder<any, any>;
