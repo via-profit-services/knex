@@ -1,7 +1,5 @@
 import { Configuration } from 'webpack';
 
-import { knexExternals } from '../src/webpack-utils';
-
 const webpackBaseConfig: Configuration = {
   target: 'node',
   module: {
@@ -25,6 +23,7 @@ const webpackBaseConfig: Configuration = {
     extensions: ['.ts', '.js', '.json'],
   },
   externals: [
+    /^busboy/,
     /^@via-profit-services\//,
     /^knex$/,
     /^winston$/,
@@ -33,9 +32,20 @@ const webpackBaseConfig: Configuration = {
     /^graphql$/,
     /^pg$/,
     /^pg-/,
-    /^mysql$/,
-    /^sqlite$/,
-    ...knexExternals,
+    // KNEX ignore not postgress drivers
+    /sqlite3/,
+    /mysql2/,
+    /mssql/,
+    /mariasql/,
+    /mysql/,
+    /oracle/,
+    /strong-oracle/,
+    /oracledb/,
+    /pg-native/,
+    /pg-query-stream/,
+
+    // KNEX artifacts
+    /import-file/,
   ],
 };
 

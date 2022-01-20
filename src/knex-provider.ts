@@ -34,7 +34,7 @@ const knexProvider: KnexProvider = props => {
       }
 
       if (logLevel === 'error') {
-        emitter.emit('knex-error', message);
+        emitter.emit('knex-error', new Error(message));
       }
 
       if (logLevel === 'error') {
@@ -90,20 +90,15 @@ const knexProvider: KnexProvider = props => {
     );
   };
 
-  const knexOnQueryErrorListener = (err: Error, query: KnexQuery) => {
-    emitter.emit('knex-error', err, {
-      query,
-    });
+  const knexOnQueryErrorListener = (err: Error, _query: KnexQuery) => {
+    emitter.emit('knex-error', err);
   };
 
   const checkConnection = async (knexHandle: Knex): Promise<void> => {
     try {
       await knexHandle.raw('select 1+1 as ping');
     } catch (err) {
-      emitter.emit(
-        'knex-error',
-        'Connection failure. Please check your database connection details. Make sure that the database is working properly.',
-      );
+      emitter.emit('knex-error', err);
     }
   };
 
@@ -122,7 +117,7 @@ const knexProvider: KnexProvider = props => {
 
     return cache.instance;
   } catch (err) {
-    emitter.emit('knex-error', 'initialization failure.', { err });
+    emitter.emit('knex-error', err);
 
     return cache.instance;
   }

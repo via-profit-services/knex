@@ -14,7 +14,6 @@ const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
   },
   entry: {
     index: path.resolve(__dirname, '../src/index.ts'),
-    'webpack-utils': path.resolve(__dirname, '../src/webpack-utils/index.ts'),
   },
   output: {
     path: path.join(__dirname, '../dist/'),
@@ -51,10 +50,6 @@ Contact    ${packageInfo.support}
           fs.copyFileSync(
             path.resolve(__dirname, '../src/@types/index.d.ts'),
             path.resolve(__dirname, '../dist/index.d.ts'),
-          );
-          fs.copyFileSync(
-            path.resolve(__dirname, '../src/@types/webpack-utils.d.ts'),
-            path.resolve(__dirname, '../dist/webpack-utils.d.ts'),
           );
           callback();
         });

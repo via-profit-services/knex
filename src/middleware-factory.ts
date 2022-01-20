@@ -9,10 +9,6 @@ const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = configuration => {
       config: configuration,
       emitter: context.emitter,
     });
-
-    return {
-      context,
-    };
   };
 
   return middleware;

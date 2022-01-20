@@ -2,16 +2,14 @@
 import * as core from '@via-profit-services/core';
 import express from 'express';
 import path from 'path';
-import { createServer } from 'http';
 
 import schema from './schema';
 import * as knex from '../index';
 import graphiql from './graphiql';
 
 (async () => {
-  const port = 8085;
+  const port = 8080;
   const app = express();
-  const server = createServer(app);
 
   const knexMiddleware = knex.factory({
     client: 'sqlite3',
@@ -20,19 +18,22 @@ import graphiql from './graphiql';
     },
   });
 
-  const { graphQLExpress } = await core.factory({
-    server,
+  const graphQLExpress = await core.graphqlExpressFactory({
     schema,
     middleware: [
       // subscribe to events
-      async ({ context, requestCounter }) => {
-        if (requestCounter === 1) {
-          context.emitter.on('knex-error', msg => console.error('[Knex error]', msg));
-          context.emitter.on('knex-warning', msg => console.warn('[Knex warn]', msg));
-          context.emitter.on('knex-debug', msg => console.info('[Knex debug]', msg));
+      async ({ context, stats }) => {
+        if (stats.requestCounter === 1) {
+          context.emitter.on('knex-error', err =>
+            console.log('\x1b[31m%s\x1b[0m', `[Knex error] ${err.message}`),
+          );
+          context.emitter.on('knex-warning', msg =>
+            console.log('\x1b[33m%s\x1b[0m', `[Knex warn] ${msg}`),
+          );
+          context.emitter.on('knex-debug', msg =>
+            console.log('\x1b[94m%s\x1b[0m', `[Knex debug] ${msg}`),
+          );
         }
-
-        return { context };
       },
       // connect knex middleware
       knexMiddleware,
@@ -76,8 +77,6 @@ import graphiql from './graphiql';
             .onConflict('id')
             .ignore();
         }
-
-        return context;
       },
     ],
   });
@@ -106,7 +105,7 @@ fragment UserFragment on User {
     }),
   );
 
-  server.listen(port, () => {
+  app.listen(port, () => {
     console.info(`GraphQL server started at port ${port}`);
   });
 })();

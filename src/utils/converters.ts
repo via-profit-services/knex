@@ -1,5 +1,5 @@
 import { Where, WhereField } from '@via-profit-services/core';
-import {
+import type {
   ConvertOrderByToKnex,
   ConvertJsonToKnex,
   ConvertBetweenToKnex,

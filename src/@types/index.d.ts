@@ -6,7 +6,6 @@
 
 /// <reference types="node" />
 declare module '@via-profit-services/core' {
-  // import { Knex } from 'knex';
   import { Knex } from 'knex';
 
   interface Context {
@@ -16,14 +15,43 @@ declare module '@via-profit-services/core' {
      */
     knex: Knex;
   }
-
+type Ev = (error: Error) => void;
   interface CoreEmitter {
     on(event: 'knex-warning', callback: (message: string) => void): this;
-    on(event: 'knex-error', callback: (message: string, errorData?: any) => void): this;
+    on(event: 'knex-warning', listener: (message: string) => void): this;
+    once(event: 'knex-warning', listener: (message: string) => void): this;
+    addListener(event: 'knex-warning', listener: (message: string) => void): this;
+    removeListener(event: 'knex-warning', listener: (message: string) => void): this;
+    prependListener(event: 'knex-warning', listener: (message: string) => void): this;
+    prependOnceListener(event: 'knex-warning', listener: (message: string) => void): this;
+    emit(event: 'knex-warning', ...args: [message: string]): boolean;
+    removeAllListeners(event: 'knex-warning'): this;
+    listeners(event: 'knex-warning'): Function[];
+    listenerCount(event: 'knex-warning'): number;
+
+    on(event: 'knex-error', callback: (error: Error) => void): this;
+    on(event: 'knex-error', listener: (error: Error) => void): this;
+    once(event: 'knex-error', listener: (error: Error) => void): this;
+    addListener(event: 'knex-error', listener: (error: Error) => void): this;
+    removeListener(event: 'knex-error', listener: (error: Error) => void): this;
+    prependListener(event: 'knex-error', listener: (error: Error) => void): this;
+    prependOnceListener(event: 'knex-error', listener: (error: Error) => void): this;
+    emit(event: 'knex-error', ...args: [error: Error]): boolean;
+    removeAllListeners(event: 'knex-error'): this;
+    listeners(event: 'knex-error'): Function[];
+    listenerCount(event: 'knex-error'): number;
+
     on(event: 'knex-debug', callback: (message: string) => void): this;
-    once(event: 'knex-warning', callback: (message: string) => void): this;
-    once(event: 'knex-error', callback: (message: string, errorData?: any) => void): this;
-    once(event: 'knex-debug', callback: (message: string) => void): this;
+    on(event: 'knex-debug', listener: (message: string) => void): this;
+    once(event: 'knex-debug', listener: (message: string) => void): this;
+    addListener(event: 'knex-debug', listener: (message: string) => void): this;
+    removeListener(event: 'knex-debug', listener: (message: string) => void): this;
+    prependListener(event: 'knex-debug', listener: (message: string) => void): this;
+    prependOnceListener(event: 'knex-debug', listener: (message: string) => void): this;
+    emit(event: 'knex-debug', ...args: [message: string]): boolean;
+    removeAllListeners(event: 'knex-debug'): this;
+    listeners(event: 'knex-debug'): Function[];
+    listenerCount(event: 'knex-debug'): number;
   }
 }
 
