@@ -17,6 +17,10 @@ const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = configuration => {
   const knexInstance = knex(knexConfig);
 
   const knexMiddleware: Middleware = ({ context, stats }) => {
+    if (stats.requestCounter !== 1) {
+      return;
+    }
+
     const queryTimeConfig: QueryTimeConfig = {
       slow: QUERY_TIME_LIMIT_SLOW,
       panic: QUERY_TIME_LIMIT_PANIC,
@@ -68,13 +72,10 @@ const knexMiddlewareFactory: KnexGraphqlMiddlewareFactory = configuration => {
       };
     };
 
-    if (stats.requestCounter === 1) {
-      context.knex = knexInstance;
-
-      context.knex.on('query', knexOnQueryListener);
-      context.knex.on('query-response', knexOnQueryResponseListener);
-      context.knex.on('query-error', knexOnQueryErrorListener);
-    }
+    context.knex = knexInstance;
+    context.knex.on('query', knexOnQueryListener);
+    context.knex.on('query-response', knexOnQueryResponseListener);
+    context.knex.on('query-error', knexOnQueryErrorListener);
   };
 
   return {
