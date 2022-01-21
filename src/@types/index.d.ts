@@ -15,20 +15,8 @@ declare module '@via-profit-services/core' {
      */
     knex: Knex;
   }
-type Ev = (error: Error) => void;
+  type Ev = (error: Error) => void;
   interface CoreEmitter {
-    on(event: 'knex-warning', callback: (message: string) => void): this;
-    on(event: 'knex-warning', listener: (message: string) => void): this;
-    once(event: 'knex-warning', listener: (message: string) => void): this;
-    addListener(event: 'knex-warning', listener: (message: string) => void): this;
-    removeListener(event: 'knex-warning', listener: (message: string) => void): this;
-    prependListener(event: 'knex-warning', listener: (message: string) => void): this;
-    prependOnceListener(event: 'knex-warning', listener: (message: string) => void): this;
-    emit(event: 'knex-warning', ...args: [message: string]): boolean;
-    removeAllListeners(event: 'knex-warning'): this;
-    listeners(event: 'knex-warning'): Function[];
-    listenerCount(event: 'knex-warning'): number;
-
     on(event: 'knex-error', callback: (error: Error) => void): this;
     on(event: 'knex-error', listener: (error: Error) => void): this;
     once(event: 'knex-error', listener: (error: Error) => void): this;
@@ -85,15 +73,12 @@ declare module '@via-profit-services/knex' {
    */
   export type TableAliases = Record<string | 'none', string | string[]>;
 
-  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => Middleware;
+  export type KnexGraphqlMiddlewareFactory = (config: Configuration) => {
+    knexMiddleware: Middleware;
+    knexInstance: Knex;
+  };
 
-  export interface Configuration {
-    client: 'pg' | 'mysql' | 'sqlite3' | 'mysql2' | 'oracledb' | 'tedious';
-    connection: Knex.StaticConnectionConfig;
-    migrations?: Omit<Knex.MigratorConfig, 'database'>;
-    seeds?: Omit<Knex.SeederConfig, 'variables'>;
-    pool?: Omit<Knex.PoolConfig, 'name' | 'log' | 'refreshIdle' | 'returnToHead' | 'priorityRange'>;
-
+  export interface Configuration extends Knex.Config {
     /**
      * When the specified query execution speed limits are reached,\
      * Knex provider will mark the corresponding query as normal, slow or panic
@@ -108,13 +93,8 @@ declare module '@via-profit-services/knex' {
 
   export type ApplyAliases = (whereClause: Where, aliases: TableAliases) => Where;
 
-  export interface KnexProviderProps {
-    config: Configuration;
-    emitter: CoreEmitter;
-  }
 
   export type KnexMiddleware = (config: Configuration) => Middleware;
-  export type KnexProvider = (props: KnexProviderProps) => Knex;
 
   export type OrderByKnex = {
     column: string;
@@ -317,5 +297,7 @@ declare module '@via-profit-services/knex' {
   export const DATABASE_CHARSET: 'UTF8';
   export const DEFAULT_TIMEZONE: 'UTC';
 
-  export const factory: KnexGraphqlMiddlewareFactory;
+  const factory: KnexGraphqlMiddlewareFactory;
+
+  export default factory;
 }

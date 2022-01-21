@@ -32,6 +32,7 @@ const webpackBaseConfig: Configuration = {
     /^graphql$/,
     /^pg$/,
     /^pg-/,
+    /@vscode\/sqlite3/,
     // KNEX ignore not postgress drivers
     /sqlite3/,
     /mysql2/,

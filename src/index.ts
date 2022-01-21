@@ -4,4 +4,4 @@ export * from './utils/converters';
 export * from './utils/extractors';
 export * from './constants';
 
-export { factory };
+export default factory;
