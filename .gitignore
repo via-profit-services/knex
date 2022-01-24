@@ -20,3 +20,5 @@ dump.rdb
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+
+/src/__test__/database.sqlite

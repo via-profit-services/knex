@@ -1,7 +1,7 @@
 {
     "name": "@via-profit-services/knex",
     "support": "https://via-profit.ru",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "description": "Via Profit Knex provider",
     "main": "dist/index.js",
     "keywords": [
