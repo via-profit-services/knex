@@ -22,7 +22,6 @@ const webpackProdConfig: Configuration = merge(webpackBaseConfig, {
   },
   mode: 'production',
   plugins: [
-    // new ViaProfitKnexWebpackPlugin(),
     new BannerPlugin({
       banner: `
 Via Profit Services / Knex
@@ -35,7 +34,7 @@ Contact    ${packageInfo.support}
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE ? 'server' : 'disabled',
       openAnalyzer: true,
-    }),
+    }) as any,
     {
       apply: (compiler: Compiler) => {
         compiler.hooks.beforeRun.tapAsync('WebpackBeforeBuild', (_, callback) => {
