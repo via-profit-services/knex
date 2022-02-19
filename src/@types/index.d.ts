@@ -54,6 +54,7 @@ declare module '@via-profit-services/knex' {
     Middleware,
     OutputSearch,
     CoreEmitter,
+    WhereField,
   } from '@via-profit-services/core';
 
   /**
@@ -91,7 +92,7 @@ declare module '@via-profit-services/knex' {
     panic?: number;
   };
 
-  export type ApplyAliases = (whereClause: Where, aliases: TableAliases) => Where;
+  export type ApplyAliases = <T extends string | Where | OrderBy | Between | OutputSearch>(whereClause: T, aliases: TableAliases) => T;
 
 
   export type KnexMiddleware = (config: Configuration) => Middleware;

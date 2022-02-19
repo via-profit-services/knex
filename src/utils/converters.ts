@@ -1,16 +1,43 @@
-import { Where, WhereField } from '@via-profit-services/core';
+import { Where, WhereField, OrderBy, OutputSearch, Between } from '@via-profit-services/core';
 import type {
   ConvertOrderByToKnex,
   ConvertJsonToKnex,
   ConvertBetweenToKnex,
   ConvertWhereToKnex,
   ConvertSearchToKnex,
+  TableAliases,
   ApplyAliases,
 } from '@via-profit-services/knex';
 
 import { DEFAULT_TIMEZONE } from '../constants';
 
-export const applyAliases: ApplyAliases = (whereClause, aliases) => {
+const isWhereClause = (data: unknown): data is Where =>
+  Array.isArray(data) && data.some(entry => Array.isArray(entry) && entry.length === 3);
+
+const isOrderBy = (data: unknown): data is OrderBy =>
+  Array.isArray(data) &&
+  data.some(entry => Object.keys(entry).length === 2 && 'field' in entry && 'direction' in entry);
+
+const isBetween = (data: unknown): data is Between =>
+  typeof data === 'object' &&
+  Object.values(data).some(
+    entry => Object.keys(entry).length === 2 && 'start' in entry && 'end' in entry,
+  );
+
+const isSearch = (data: unknown): data is OutputSearch =>
+  Array.isArray(data) &&
+  data.some(entry => Object.keys(entry).length === 2 && 'field' in entry && 'query' in entry);
+
+export const applyAliases: ApplyAliases = <
+  T extends string | Where | OrderBy | Between | OutputSearch,
+>(
+  source: T,
+  aliases?: TableAliases,
+): T => {
+  if (typeof aliases === 'undefined') {
+    return source;
+  }
+
   const aliasesMap = new Map<string, string>();
   Object.entries(aliases).forEach(([tableName, field]) => {
     const fieldsArray = Array.isArray(field) ? field : [field];
@@ -19,20 +46,62 @@ export const applyAliases: ApplyAliases = (whereClause, aliases) => {
     });
   });
 
-  const newWhere = whereClause.map(data => {
-    const [field, action, value] = data;
-    const alias = aliasesMap.get(field) || aliasesMap.get('*');
+  // If is a string
+  if (typeof source === 'string') {
+    const alias = aliasesMap.get(source) || aliasesMap.get('*');
+    const field = alias && alias !== 'none' ? `${alias}.${source}` : source;
 
-    const whereField: WhereField = [
-      alias && alias !== 'none' ? `${alias}.${field}` : field,
-      action,
-      value,
-    ];
+    return field as any;
+  }
 
-    return whereField;
-  });
+  // If is an array like Where clause ([['field', '=', 123]])
+  if (isWhereClause(source)) {
+    const whereClause = source.map(data => {
+      // check to segments contained
+      if (data.length === 3) {
+        const [field, action, value] = data as WhereField;
+        const whereField: WhereField = [applyAliases(field, aliases), action, value];
 
-  return newWhere;
+        return whereField;
+      }
+
+      return data;
+    });
+
+    return whereClause as T & Where;
+  }
+
+  // If is an array like OrderBy ([{field: 'field', direction: 'asc'}])
+  if (isOrderBy(source)) {
+    const orderBy = source.map(({ field, direction }) => ({
+      field: applyAliases(field, aliases),
+      direction: direction,
+    }));
+
+    return orderBy as T & OrderBy;
+  }
+
+  if (isBetween(source)) {
+    const between: Between = {};
+    Object.entries(source).forEach(([field, value]) => {
+      const newField = applyAliases(field, aliases);
+
+      between[newField] = value;
+    });
+
+    return between as T & Between;
+  }
+
+  if (isSearch(source)) {
+    const search = source.map(({ field, query }) => ({
+      query,
+      field: applyAliases(field, aliases),
+    }));
+
+    return search as T & OutputSearch;
+  }
+
+  return source;
 };
 
 /**
@@ -41,22 +110,10 @@ export const applyAliases: ApplyAliases = (whereClause, aliases) => {
 export const convertOrderByToKnex: ConvertOrderByToKnex = (orderBy, aliases) => {
   const orderByArray = [...(orderBy || [])];
 
-  const aliasesMap = new Map<string, string>();
-  Object.entries(aliases || {}).forEach(([tableName, field]) => {
-    const fieldsArray = Array.isArray(field) ? field : [field];
-    fieldsArray.forEach(fieldName => {
-      aliasesMap.set(fieldName, tableName);
-    });
-  });
-
-  return orderByArray.map(({ field, direction }) => {
-    const alias = aliasesMap.get(field) || aliasesMap.get('*');
-
-    return {
-      column: alias && alias !== 'none' ? `${alias}.${field}` : field,
-      order: direction,
-    };
-  });
+  return orderByArray.map(({ field, direction }) => ({
+    column: applyAliases(field, aliases),
+    order: direction,
+  }));
 };
 
 export const convertJsonToKnex: ConvertJsonToKnex = (knex, data) => {
@@ -79,17 +136,8 @@ export const convertBetweenToKnex: ConvertBetweenToKnex = (builder, between, opt
     return builder;
   }
 
-  const aliasesMap = new Map<string, string>();
-  Object.entries(aliases || {}).forEach(([tableName, field]) => {
-    const fieldsArray = Array.isArray(field) ? field : [field];
-    fieldsArray.forEach(fieldName => {
-      aliasesMap.set(fieldName, tableName);
-    });
-  });
-
   Object.entries(between).forEach(([field, betweenData]) => {
-    const alias = aliasesMap.get(field) || aliasesMap.get('*');
-    builder.whereBetween(alias && alias !== 'none' ? `${alias}.${field}` : field, [
+    builder.whereBetween(applyAliases(field, aliases), [
       betweenData.start instanceof Date
         ? new Date(betweenData.start).toUTCString()
         : betweenData.start,
@@ -165,15 +213,6 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliase
 
   try {
     const searchFields: Record<string, string[]> = {};
-    const aliasesMap = new Map<string, string>();
-
-    // fill aliasesMap
-    Object.entries(aliases || {}).forEach(([tableName, field]) => {
-      const fieldsArray = Array.isArray(field) ? field : [field];
-      fieldsArray.forEach(fieldName => {
-        aliasesMap.set(fieldName, tableName);
-      });
-    });
 
     // Group search queries by field name
     search.forEach(({ field, query }) => {
@@ -185,8 +224,7 @@ export const convertSearchToKnex: ConvertSearchToKnex = (builder, search, aliase
     Object.entries(searchFields).forEach(([field, queries]) => {
       builder.andWhere(andWhereBuilder => {
         queries.forEach(query => {
-          const alias = aliasesMap.get(field) || aliasesMap.get('*');
-          const column = alias && alias !== 'none' ? `${alias}.${field}` : field;
+          const column = applyAliases(field, aliases);
 
           switch (strategy) {
             case 'to-end':
