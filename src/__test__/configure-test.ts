@@ -22,7 +22,12 @@ const startServer = async () =>
       middleware: [knexMiddleware],
     });
 
-    server.on('request', graphqlHTTP);
+    server.on('request', async (req, res) => {
+      const response = await graphqlHTTP(req, res);
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(response));
+      res.end();
+    });
     server.on('close', () => knexInstance.destroy());
     server.listen(port, () => resolve());
   });
